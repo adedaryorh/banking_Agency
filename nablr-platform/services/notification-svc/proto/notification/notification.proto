@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package nabla.notification.v1;
+
+option go_package = "nabla/notification-svc/proto/notification;notification";
+
+// NotificationService exposes trusted internal delivery operations.
+// Callers must pass x-service-auth metadata matching INTERNAL_SERVICE_TOKEN.
+service NotificationService {
+  rpc SendSMS(SendSMSRequest) returns (DeliveryResponse);
+  rpc SendEmail(SendEmailRequest) returns (DeliveryResponse);
+  rpc SendPush(SendPushRequest) returns (DeliveryResponse);
+}
+
+message SendSMSRequest {
+  string to = 1;
+  string body = 2;
+  string sender = 3;
+}
+
+message SendEmailRequest {
+  string to = 1;
+  string subject = 2;
+  string text = 3;
+  string html = 4;
+}
+
+message SendPushRequest {
+  string device_token = 1;
+  string title = 2;
+  string body = 3;
+  map<string, string> data = 4;
+}
+
+message DeliveryResponse {
+  bool success = 1;
+  string provider = 2;
+  string reference = 3;
+  string message = 4;
+}

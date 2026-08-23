@@ -1,0 +1,238 @@
+
+name: Go CI/CD with Systemd (vas-svc)
+
+on:
+  push:
+    branches:
+      - yak-deploy-stag
+    paths:
+      - 'services/vas-svc/**'
+      - '.github/workflows/vas-svc.yml'
+
+  workflow_dispatch:
+
+env:
+  APP_NAME_VAS_SVC: ${{ secrets.APP_NAME_VAS_SVC }}
+  GO_VERSION: "1.26.6"
+  RELEASES_DIRVAS: ${{ secrets.RELEASES_DIRVAS }}
+  CURRENT_DIRVAS: ${{ secrets.CURRENT_DIRVAS }}
+  BUILD_DIR: "/tmp/vas-svc-build"
+  ACTIVE_VERSION_FILEVAS: ${{ secrets.ACTIVE_VERSION_FILEVAS }}
+  ACTIVE_RELEASE_FILE: "${{ github.workspace }}/active_release"
+  GOWORK: "off"
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy VAS Service
+    runs-on: nablrmsvc
+    timeout-minutes: 10
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Validate Deployment Variables
+        run: |
+          set -euo pipefail
+          echo "Validating deployment variables"
+          test -n "${{ env.APP_NAME_VAS_SVC }}"
+          test -n "${{ env.RELEASES_DIRVAS }}"
+          test -n "${{ env.CURRENT_DIRVAS }}"
+          test -n "${{ env.ACTIVE_VERSION_FILEVAS }}"
+          echo "Deployment variables validated"
+      - name: Setup Go 1.26.6
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+          cache-dependency-path: services/vas-svc/go.sum
+
+      - name: Verify Go Environment
+        working-directory: services/vas-svc
+        run: |
+          set -euo pipefail
+          echo "========================================="
+          echo "Go Environment"
+          echo "========================================="
+          go version
+          go env GOROOT
+          go env GOPATH
+          echo "go.mod version"
+          grep "^go " go.mod || true
+      - name: Download Dependencies
+        working-directory: services/vas-svc
+        run: |
+          set -euo pipefail
+          go mod download
+          go mod verify
+      - name: Prepare Build Directory
+        run: |
+          set -euo pipefail
+          rm -rf "${{ env.BUILD_DIR }}"
+          mkdir -p "${{ env.BUILD_DIR }}"
+          echo "${{ github.sha }}" > "${{ env.BUILD_DIR }}/COMMIT_SHA"
+      - name: Create Environment File
+        env:
+          SECRET_ENV: ${{ secrets.VAS_SVC_ENV_FILE }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$SECRET_ENV" \
+            > "${{ env.BUILD_DIR }}/.env"
+          chmod 600 "${{ env.BUILD_DIR }}/.env"
+      - name: Build VAS Service Binary
+        working-directory: services/vas-svc
+        run: |
+          set -euo pipefail
+          echo "Building VAS Service binary..."
+          CGO_ENABLED=0 \
+          GOOS=linux \
+          GOARCH=amd64 \
+          go build \
+            -ldflags="-s -w" \
+            -o "${{ env.BUILD_DIR }}/${{ env.APP_NAME_VAS_SVC }}" \
+            ./cmd
+          chmod +x "${{ env.BUILD_DIR }}/${{ env.APP_NAME_VAS_SVC }}"
+          echo "VAS Service build complete"
+      - name: Verify Build Output
+        run: |
+          set -euo pipefail
+          echo "Build output"
+          ls -lah "${{ env.BUILD_DIR }}"
+          test -f "${{ env.BUILD_DIR }}/${{ env.APP_NAME_VAS_SVC }}"
+          test -f "${{ env.BUILD_DIR }}/COMMIT_SHA"
+          test -f "${{ env.BUILD_DIR }}/.env"
+          test -x "${{ env.BUILD_DIR }}/${{ env.APP_NAME_VAS_SVC }}"
+          echo "Build validated"
+      - name: Create Release
+        run: |
+          set -euo pipefail
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          RELEASE_PATH="${{ env.RELEASES_DIRVAS }}/vas-svc-${TIMESTAMP}"
+          echo "Creating release at:"
+          echo "$RELEASE_PATH"
+          mkdir -p "$RELEASE_PATH"
+          # Copy VAS Service binary
+          install -m755 \
+            "${{ env.BUILD_DIR }}/${{ env.APP_NAME_VAS_SVC }}" \
+            "$RELEASE_PATH/${{ env.APP_NAME_VAS_SVC }}"
+          # Copy commit SHA
+          cp \
+            "${{ env.BUILD_DIR }}/COMMIT_SHA" \
+            "$RELEASE_PATH/COMMIT_SHA"
+          # Copy environment
+          cp \
+            "${{ env.BUILD_DIR }}/.env" \
+            "$RELEASE_PATH/.env"
+          # Copy SQL migrations
+          # cp -r \
+          #   "${{ github.workspace }}/services/migrations" \
+          #   "$RELEASE_PATH/migrations"
+          # Write active release path
+          echo "$RELEASE_PATH" > "${{ env.ACTIVE_RELEASE_FILE }}"
+          echo "Release created"
+      - name: Validate Release
+        run: |
+          set -euo pipefail
+          RELEASE_PATH=$(cat "${{ env.ACTIVE_RELEASE_FILE }}")
+          echo "Validating release:"
+          echo "$RELEASE_PATH"
+          test -d "$RELEASE_PATH"
+          test -f \
+            "$RELEASE_PATH/${{ env.APP_NAME_VAS_SVC }}"
+          test -f \
+            "$RELEASE_PATH/COMMIT_SHA"
+          test -f \
+            "$RELEASE_PATH/.env"
+          # test -d \
+          #   "$RELEASE_PATH/migrations"
+          # test -f \
+          #   "$RELEASE_PATH/migrations/*.sql"
+          test -x \
+            "$RELEASE_PATH/${{ env.APP_NAME_VAS_SVC }}"
+          RELEASE_SHA=$(cat "$RELEASE_PATH/COMMIT_SHA")
+          if [ "$RELEASE_SHA" != "${{ github.sha }}" ]; then
+            echo "Release SHA mismatch"
+            echo "Expected: ${{ github.sha }}"
+            echo "Actual:   $RELEASE_SHA"
+            exit 1
+          fi
+          echo "Release validation passed"
+      # Enable this only when you have a migration mechanism ready.
+      #
+      # - name: Run Database Migrations
+      #   run: |
+      #     set -euo pipefail
+      #
+      #     RELEASE_PATH=$(cat "${{ env.ACTIVE_RELEASE_FILE }}")
+      #
+      #     echo "Running database migrations..."
+      #
+      #     cd "$RELEASE_PATH"
+      #
+      #     ./migration -dir ./migrations up
+
+      - name: Switch Symlink
+        run: |
+          set -euo pipefail
+          RELEASE_PATH=$(cat "${{ env.ACTIVE_RELEASE_FILE }}")
+          ln -sfn \
+            "$RELEASE_PATH" \
+            "${{ env.CURRENT_DIRVAS }}"
+          echo "$RELEASE_PATH" \
+            | tee "${{ env.ACTIVE_VERSION_FILEVAS }}"
+          echo "Symlink switched"
+      - name: Restart VAS Service
+        run: |
+          set -euo pipefail
+          sudo systemctl stop "${{ env.APP_NAME_VAS_SVC }}" || true
+          sleep 3
+          sudo systemctl daemon-reload
+          sudo systemctl start "${{ env.APP_NAME_VAS_SVC }}"
+          sleep 5
+      - name: Verify Running Version
+        run: |
+          set -euo pipefail
+          ACTIVE_SHA=$(
+            cat "${{ env.CURRENT_DIRVAS }}/COMMIT_SHA"
+          )
+          if [ "$ACTIVE_SHA" != "${{ github.sha }}" ]; then
+            echo "Running version mismatch"
+            echo "Expected: ${{ github.sha }}"
+            echo "Actual:   $ACTIVE_SHA"
+            exit 1
+          fi
+          echo "Running version verified"
+      - name: Cleanup Old Releases
+        run: |
+          set -euo pipefail
+          cd "${{ env.RELEASES_DIRVAS }}"
+          KEEP=3
+          ls -1dt vas-svc-* 2>/dev/null \
+            | tail -n +$((KEEP+1)) \
+            | xargs -r rm -rf
+          echo "Cleanup complete"
+      - name: Deployment Summary
+        run: |
+          set -euo pipefail
+          ACTIVE=$(
+            cat "${{ env.ACTIVE_VERSION_FILEVAS }}" 2>/dev/null \
+            || echo "unknown"
+          )
+          RELEASE=$(
+            cat "${{ env.ACTIVE_RELEASE_FILE }}" 2>/dev/null \
+            || echo "unknown"
+          )
+          SHA=$(
+            cat "$RELEASE/COMMIT_SHA" 2>/dev/null \
+            || echo "unknown"
+          )
+          echo "========================================="
+          echo "       VAS SERVICE DEPLOYMENT SUCCESS"
+          echo "========================================="
+          echo "Application: ${{ env.APP_NAME_VAS_SVC }}"
+          echo "Commit SHA:  $SHA"
+          echo "Active:      $ACTIVE"
+          echo "Release:     $RELEASE"
+          echo "Server:      $(hostname)"
+          echo "========================================="

@@ -1,0 +1,1789 @@
+basePath: /
+definitions:
+  main.SwaggerAddressRequest:
+    properties:
+      address_line1:
+        example: 12 Admiralty Way
+        type: string
+      address_line2:
+        example: Lekki Phase 1
+        type: string
+      city:
+        example: Lagos
+        type: string
+      postal_code:
+        example: "100001"
+        type: string
+      state:
+        example: Lagos
+        type: string
+    type: object
+  main.SwaggerBVNRequest:
+    properties:
+      bvn:
+        example: "12345678901"
+        type: string
+    type: object
+  main.SwaggerChangePINRequest:
+    properties:
+      current_pin:
+        example: "1234"
+        type: string
+      new_pin:
+        example: "5678"
+        type: string
+    type: object
+  main.SwaggerConfirmPhonePasswordResetRequest:
+    properties:
+      challenge_token:
+        example: otp-challenge-token
+        type: string
+      code:
+        example: "123456"
+        type: string
+      new_password:
+        example: "123456"
+        type: string
+    type: object
+  main.SwaggerDeviceMetadataRequest:
+    properties:
+      deviceName:
+        example: MacOs
+        type: string
+      latitude:
+        example: 6.524379
+        type: number
+      longitude:
+        example: 3.379206
+        type: number
+    type: object
+  main.SwaggerEmailRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+    type: object
+  main.SwaggerFacialVerificationRequest:
+    properties:
+      encrypted_liveness_payload:
+        example: provider-payload
+        type: string
+      liveness_frame_images_base64:
+        example:
+        - FRAME_1_BASE64
+        - FRAME_2_BASE64
+        - FRAME_3_BASE64
+        items:
+          type: string
+        type: array
+      selfie_image_base64:
+        example: REPLACE_WITH_BASE64_SELFIE
+        type: string
+    type: object
+  main.SwaggerInternalEmailRequest:
+    properties:
+      html:
+        example: <strong>Email HTML body</strong>
+        type: string
+      subject:
+        example: Nabla test
+        type: string
+      text:
+        example: Email text body
+        type: string
+      to:
+        example: user@example.com
+        type: string
+    type: object
+  main.SwaggerKYCDetailsRequest:
+    properties:
+      bvn:
+        example: "12345678901"
+        type: string
+      nin:
+        example: "12345678901"
+        type: string
+      phone_number:
+        example: "08093536368"
+        type: string
+    type: object
+  main.SwaggerLoginRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      password:
+        example: Password123!
+        type: string
+      phone_number:
+        example: "08093536368"
+        type: string
+    type: object
+  main.SwaggerMobileVersionRequest:
+    properties:
+      build_number:
+        example: "100"
+        type: string
+      platform:
+        example: ios
+        type: string
+      version:
+        example: 1.0.0
+        type: string
+    type: object
+  main.SwaggerNINLivenessRequest:
+    properties:
+      encrypted_liveness_payload:
+        example: provider-payload
+        type: string
+      liveness_frame_images_base64:
+        example:
+        - FRAME_1_BASE64
+        - FRAME_2_BASE64
+        - FRAME_3_BASE64
+        items:
+          type: string
+        type: array
+      nin:
+        example: "12345678901"
+        type: string
+      selfie_image_base64:
+        example: REPLACE_WITH_BASE64_SELFIE
+        type: string
+    type: object
+  main.SwaggerOTPConfirmRequest:
+    properties:
+      challenge_token:
+        example: otp-challenge-token
+        type: string
+      code:
+        example: "123456"
+        type: string
+    type: object
+  main.SwaggerOnboardingDeviceRequest:
+    properties:
+      deviceId:
+        example: device30
+        type: string
+      deviceMetadata:
+        $ref: '#/definitions/main.SwaggerDeviceMetadataRequest'
+    type: object
+  main.SwaggerPINRequest:
+    properties:
+      pin:
+        example: "1234"
+        type: string
+    type: object
+  main.SwaggerPasswordRequest:
+    properties:
+      password:
+        example: 123456
+        type: integer
+    type: object
+  main.SwaggerPauseScheduleRequest:
+    properties:
+      reason:
+        example: Paused by customer
+        type: string
+    type: object
+  main.SwaggerPhoneOnboardingRegisterRequest:
+    properties:
+      deviceId:
+        example: device30
+        type: string
+      deviceMetadata:
+        $ref: '#/definitions/main.SwaggerDeviceMetadataRequest'
+      phone_number:
+        example: "08093536368"
+        type: string
+    type: object
+  main.SwaggerPhonePasswordResetRequest:
+    properties:
+      phone_number:
+        example: "07035141082"
+        type: string
+    type: object
+  main.SwaggerPhoneRequest:
+    properties:
+      phone_number:
+        example: "08093536368"
+        type: string
+    type: object
+  main.SwaggerProfileUpdateRequest:
+    properties:
+      date_of_birth:
+        example: "1996-05-21"
+        type: string
+      first_name:
+        example: Abdulahi
+        type: string
+      gender:
+        example: male
+        type: string
+      last_name:
+        example: Adedayo
+        type: string
+      middle_name:
+        example: Ola
+        type: string
+      nablr_username:
+        example: adedayo
+        type: string
+    type: object
+  main.SwaggerPushRequest:
+    properties:
+      body:
+        example: Push message body
+        type: string
+      data:
+        additionalProperties:
+          type: string
+        type: object
+      device_token:
+        example: firebase-device-token
+        type: string
+      title:
+        example: Nabla
+        type: string
+    type: object
+  main.SwaggerRefreshRequest:
+    properties:
+      refresh_token:
+        example: paste-refresh-token-here
+        type: string
+    type: object
+  main.SwaggerRegisterRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      password:
+        example: Password123!
+        type: string
+      phone_number:
+        example: "08093536368"
+        type: string
+    type: object
+  main.SwaggerResetPINRequest:
+    properties:
+      challenge_token:
+        example: otp-challenge-token
+        type: string
+      code:
+        example: "123456"
+        type: string
+      new_pin:
+        example: "5678"
+        type: string
+    type: object
+  main.SwaggerResetPasswordRequest:
+    properties:
+      new_password:
+        example: NewPassword123!
+        type: string
+      token:
+        example: paste-token-here
+        type: string
+    type: object
+  main.SwaggerSMSRequest:
+    properties:
+      body:
+        example: Your Nabla verification code is 123456
+        type: string
+      to:
+        example: "+2348093536368"
+        type: string
+    type: object
+  main.SwaggerScheduleAuthorizePINRequest:
+    properties:
+      account_number:
+        example: "0123456789"
+        type: string
+      amount:
+        example: "10000.00"
+        type: string
+      bank_code:
+        example: "058"
+        type: string
+      beneficiary_id:
+        example: 00000000-0000-4000-8000-000000000001
+        type: string
+      currency:
+        example: NGN
+        type: string
+      pin:
+        example: "1234"
+        type: string
+      recipient_reference:
+        example: '@adedayo'
+        type: string
+      recipient_type:
+        example: bank
+        type: string
+    type: object
+  main.SwaggerScheduledPaymentRequest:
+    properties:
+      account_name:
+        example: Aisha Sanni Muhammed
+        type: string
+      account_number:
+        example: "0123456789"
+        type: string
+      amount:
+        example: "10000.00"
+        type: string
+      bank_code:
+        example: "058"
+        type: string
+      beneficiary_id:
+        example: 00000000-0000-4000-8000-000000000001
+        type: string
+      currency:
+        example: NGN
+        type: string
+      end_date:
+        example: "2027-09-05"
+        type: string
+      frequency:
+        example: monthly
+        type: string
+      max_occurrences:
+        example: 12
+        type: integer
+      name:
+        example: Rent 2026 top-up
+        type: string
+      narrative:
+        example: Rent
+        type: string
+      payment_date:
+        example: "2026-09-05"
+        type: string
+      pin_token:
+        example: 00000000-0000-4000-8000-000000000002
+        type: string
+      recipient_reference:
+        example: '@adedayo'
+        type: string
+      recipient_type:
+        example: bank
+        type: string
+      schedule_type:
+        example: recurring
+        type: string
+    type: object
+  main.SwaggerScheduledPaymentUpdateRequest:
+    properties:
+      amount:
+        example: "12000.00"
+        type: string
+      end_date:
+        example: "2027-10-05"
+        type: string
+      frequency:
+        example: monthly
+        type: string
+      max_occurrences:
+        example: 12
+        type: integer
+      name:
+        example: Updated rent
+        type: string
+      narrative:
+        example: Updated rent payment
+        type: string
+      next_run_at:
+        example: "2026-10-05T09:00:00+01:00"
+        type: string
+    type: object
+  main.SwaggerSecurityOTPRequest:
+    properties:
+      channel:
+        example: sms
+        type: string
+      purpose:
+        example: pin_reset
+        type: string
+    type: object
+  main.SwaggerTokenRequest:
+    properties:
+      token:
+        example: paste-token-here
+        type: string
+    type: object
+  main.SwaggerTrustDeviceRequest:
+    properties:
+      challenge_token:
+        example: otp-challenge-token
+        type: string
+      code:
+        example: "123456"
+        type: string
+      device_id:
+        example: 00000000-0000-4000-8000-000000000001
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Public gateway for Nabla microservices.
+  title: Nabla API Gateway
+  version: "1.0"
+paths:
+  /api/v1/auth/forgot-password:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Forgot password payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Forgot password
+      tags:
+      - Auth
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Login payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerLoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Login with email or phone and password
+      tags:
+      - Auth
+  /api/v1/auth/logout:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Logout payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerRefreshRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Logout
+      tags:
+      - Auth
+  /api/v1/auth/magic-link/confirm:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Magic link confirmation payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Confirm magic link
+      tags:
+      - Auth
+  /api/v1/auth/magic-link/request:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Magic link request payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Request magic link
+      tags:
+      - Auth
+  /api/v1/auth/password/phone/confirm:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Phone password reset confirmation
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerConfirmPhonePasswordResetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Confirm phone password reset
+      tags:
+      - Auth
+  /api/v1/auth/password/phone/request:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Phone password reset request
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerPhonePasswordResetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Request phone password reset OTP
+      tags:
+      - Auth
+  /api/v1/auth/refresh:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Refresh token payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerRefreshRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Refresh access token
+      tags:
+      - Auth
+  /api/v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Registration payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerRegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Register with email, phone, and password
+      tags:
+      - Auth
+  /api/v1/auth/resend-verification:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Email payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Resend email verification
+      tags:
+      - Auth
+  /api/v1/auth/reset-password:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Reset password payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerResetPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Reset password
+      tags:
+      - Auth
+  /api/v1/auth/verify-email:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Email verification token
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Verify email token
+      tags:
+      - Auth
+  /api/v1/identity/health:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Identity service health through gateway
+      tags:
+      - Gateway
+  /api/v1/identity/profile:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get identity profile
+      tags:
+      - Identity
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Profile payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerProfileUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update identity profile
+      tags:
+      - Identity
+  /api/v1/internal/v1/email:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Internal service token
+        in: header
+        name: X-Internal-Service-Token
+        required: true
+        type: string
+      - description: Email payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerInternalEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - InternalServiceToken: []
+      summary: Send email through notification service
+      tags:
+      - Internal Notifications
+  /api/v1/internal/v1/push:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Internal service token
+        in: header
+        name: X-Internal-Service-Token
+        required: true
+        type: string
+      - description: Push payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerPushRequest'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - InternalServiceToken: []
+      summary: Send push through notification service
+      tags:
+      - Internal Notifications
+  /api/v1/internal/v1/sms:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Internal service token
+        in: header
+        name: X-Internal-Service-Token
+        required: true
+        type: string
+      - description: SMS payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerSMSRequest'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - InternalServiceToken: []
+      summary: Send SMS through notification service
+      tags:
+      - Internal Notifications
+  /api/v1/kyc/address:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Address payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerAddressRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Submit address
+      tags:
+      - KYC
+  /api/v1/kyc/attempts:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List KYC attempts
+      tags:
+      - KYC
+  /api/v1/kyc/bvn:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: BVN payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerBVNRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Submit authenticated BVN verification
+      tags:
+      - KYC
+  /api/v1/kyc/details:
+    post:
+      consumes:
+      - application/json
+      description: Proxies to identity service. Send exactly one of phone_number,
+        bvn, or nin. When nin is sent, identity returns the provider NIN lookup response.
+      parameters:
+      - description: KYC details lookup payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerKYCDetailsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Lookup phone, BVN, or NIN details
+      tags:
+      - KYC
+  /api/v1/kyc/limits:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get transaction limits
+      tags:
+      - KYC
+  /api/v1/kyc/nin:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: NIN payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerNINLivenessRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Submit authenticated NIN verification
+      tags:
+      - KYC
+  /api/v1/kyc/profile:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get KYC profile
+      tags:
+      - KYC
+  /api/v1/mobile/version/check:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Version check payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerMobileVersionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Check mobile app version
+      tags:
+      - Mobile
+  /api/v1/notification/health:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Notification service health through gateway
+      tags:
+      - Gateway
+  /api/v1/onboarding/details:
+    post:
+      consumes:
+      - application/json
+      description: Uses the onboarding token instead of an access token. Send exactly
+        one of phone_number, bvn, or nin.
+      parameters:
+      - description: Bearer onboarding_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Client device ID
+        in: header
+        name: X-Device-ID
+        required: true
+        type: string
+      - description: Onboarding details lookup payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerKYCDetailsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Lookup onboarding phone, BVN, or NIN details
+      tags:
+      - Onboarding
+  /api/v1/onboarding/device:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer onboarding_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Client device ID
+        in: header
+        name: X-Device-ID
+        required: true
+        type: string
+      - description: Device metadata payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerOnboardingDeviceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Register onboarding device
+      tags:
+      - Onboarding
+  /api/v1/onboarding/facial-verification:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer onboarding_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Client device ID
+        in: header
+        name: X-Device-ID
+        required: true
+        type: string
+      - description: Optional provider verification request ID
+        in: header
+        name: X-Verification-Request-ID
+        type: string
+      - description: Facial verification payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerFacialVerificationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Submit onboarding facial verification
+      tags:
+      - Onboarding
+  /api/v1/onboarding/nin:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer onboarding_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Client device ID
+        in: header
+        name: X-Device-ID
+        required: true
+        type: string
+      - description: Optional provider verification request ID
+        in: header
+        name: X-Verification-Request-ID
+        type: string
+      - description: NIN liveness payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerNINLivenessRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Submit onboarding NIN liveness verification
+      tags:
+      - Onboarding
+  /api/v1/onboarding/otp/resend:
+    post:
+      parameters:
+      - description: Bearer onboarding_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Client device ID
+        in: header
+        name: X-Device-ID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Resend onboarding OTP
+      tags:
+      - Onboarding
+  /api/v1/onboarding/password:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer onboarding_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Client device ID
+        in: header
+        name: X-Device-ID
+        required: true
+        type: string
+      - description: 6-digit numeric passcode payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Complete onboarding 6-digit passcode setup
+      tags:
+      - Onboarding
+  /api/v1/onboarding/phone/confirm:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer onboarding_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Client device ID
+        in: header
+        name: X-Device-ID
+        required: true
+        type: string
+      - description: OTP confirmation payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerOTPConfirmRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Confirm onboarding phone OTP
+      tags:
+      - Onboarding
+  /api/v1/onboarding/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Phone and device metadata payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerPhoneOnboardingRegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Start phone onboarding
+      tags:
+      - Onboarding
+  /api/v1/onboarding/session/refresh:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Client device ID
+        in: header
+        name: X-Device-ID
+        required: true
+        type: string
+      - description: Phone payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerPhoneRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Refresh onboarding session
+      tags:
+      - Onboarding
+  /api/v1/onboarding/status:
+    get:
+      parameters:
+      - description: Bearer onboarding_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Client device ID
+        in: header
+        name: X-Device-ID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get onboarding status
+      tags:
+      - Onboarding
+  /api/v1/scheduled-payments:
+    get:
+      parameters:
+      - description: active, paused, completed, cancelled, or failed
+        in: query
+        name: status
+        type: string
+      - description: Page size (1-100)
+        in: query
+        name: limit
+        type: integer
+      - description: Page offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List scheduled payments
+      tags:
+      - Scheduled Payments
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Scheduled payment
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerScheduledPaymentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create a scheduled payment
+      tags:
+      - Scheduled Payments
+  /api/v1/scheduled-payments/{id}:
+    get:
+      parameters:
+      - description: Scheduled payment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get scheduled payment details
+      tags:
+      - Scheduled Payments
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Scheduled payment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Fields to update
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerScheduledPaymentUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update an active scheduled payment
+      tags:
+      - Scheduled Payments
+  /api/v1/scheduled-payments/{id}/cancel:
+    post:
+      parameters:
+      - description: Scheduled payment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete a scheduled payment
+      tags:
+      - Scheduled Payments
+  /api/v1/scheduled-payments/{id}/pause:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Scheduled payment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Pause reason
+        in: body
+        name: payload
+        schema:
+          $ref: '#/definitions/main.SwaggerPauseScheduleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Pause a scheduled payment
+      tags:
+      - Scheduled Payments
+  /api/v1/scheduled-payments/{id}/resume:
+    post:
+      parameters:
+      - description: Scheduled payment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Resume a scheduled payment
+      tags:
+      - Scheduled Payments
+  /api/v1/scheduled-payments/{id}/runs:
+    get:
+      parameters:
+      - description: Scheduled payment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get scheduled payment run history
+      tags:
+      - Scheduled Payments
+  /api/v1/scheduled-payments/authorize-pin:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: PIN and exact scheduled-payment details
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerScheduleAuthorizePINRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Authorize scheduled payment PIN
+      tags:
+      - Scheduled Payments
+  /api/v1/security/devices:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List user devices
+      tags:
+      - Security
+  /api/v1/security/devices/{deviceId}/block:
+    post:
+      parameters:
+      - description: Device ID
+        in: path
+        name: deviceId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Block device
+      tags:
+      - Security
+  /api/v1/security/devices/trust:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Trust device payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerTrustDeviceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Trust device
+      tags:
+      - Security
+  /api/v1/security/otp/request:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: OTP request payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerSecurityOTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Request security OTP
+      tags:
+      - Security
+  /api/v1/security/phone/confirm:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Phone confirmation payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerOTPConfirmRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Confirm security phone
+      tags:
+      - Security
+  /api/v1/security/phone/verify:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Phone verification payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerPhoneRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Verify security phone
+      tags:
+      - Security
+  /api/v1/security/pin:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get PIN status
+      tags:
+      - Security
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Change PIN payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerChangePINRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Change PIN
+      tags:
+      - Security
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: PIN payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerPINRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Set PIN
+      tags:
+      - Security
+  /api/v1/security/pin/reset:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Reset PIN payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.SwaggerResetPINRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Reset PIN
+      tags:
+      - Security
+  /api/v1/transfers/health:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Transfers service health through gateway
+      tags:
+      - Gateway
+  /health:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Gateway health check
+      tags:
+      - Gateway
+schemes:
+- http
+- https
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+  InternalServiceToken:
+    in: header
+    name: X-Internal-Service-Token
+    type: apiKey
+swagger: "2.0"

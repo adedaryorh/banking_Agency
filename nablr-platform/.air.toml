@@ -1,0 +1,74 @@
+# .air.toml - Air Configuration for Live Reload
+
+root = "services/identity-svc"
+testdata_dir = "testdata"
+tmp_dir = "tmp"
+env_files = [".env"]
+
+[build]
+  # Build command
+  cmd = "go build -o ./tmp/identity-svc ./cmd"
+
+  # Binary output path
+  bin = "./tmp/identity-svc"
+
+  # Watch these file extensions
+  include_ext = ["go", "mod", "sum", "sql", "html"]
+
+  # Exclude these directories
+  exclude_dir = [
+    "tmp",
+    "vendor",
+    "testdata",
+    "public",
+    "logs",
+    ".git",
+    ".idea",
+    ".vscode",
+    "data"
+  ]
+
+  # Exclude test files from triggering rebuild
+  exclude_regex = ["_test\\.go"]
+
+  # Delay before rebuild (milliseconds)
+  delay = 1000
+
+  # Stop on build error
+  stop_on_error = true
+
+  # Log file for build errors
+  log = "tmp/build-errors.log"
+
+  # Kill delay
+  kill_delay = "500ms"
+
+  # Rerun delay
+  rerun_delay = 500
+
+  # Send interrupt signal before killing
+  send_interrupt = true
+
+[color]
+  build = "yellow"
+  main = "magenta"
+  runner = "green"
+  watcher = "cyan"
+
+[log]
+  # Show timestamps in logs
+  time = true
+
+  # Show only main process logs
+  main_only = false
+
+[misc]
+  # Clean tmp directory on exit
+  clean_on_exit = true
+
+[screen]
+  # Clear screen on rebuild
+  clear_on_rebuild = true
+
+  # Keep scroll position
+  keep_scroll = true

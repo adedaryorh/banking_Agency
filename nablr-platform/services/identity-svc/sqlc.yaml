@@ -1,0 +1,42 @@
+version: "2"
+sql:
+  - engine: postgresql
+    # SQLC only needs Identity-owned tables. The runtime database is still the
+    # same shared Nabla PostgreSQL database used by every service.
+    schema: db/schema.sql
+    queries: db/queries
+    gen:
+      go:
+        package: identitydb
+        out: db/sqlc
+        sql_package: pgx/v5
+        emit_json_tags: true
+        emit_interface: true
+        emit_empty_slices: true
+        overrides:
+          - db_type: uuid
+            go_type: github.com/google/uuid.UUID
+          - db_type: uuid
+            nullable: true
+            go_type:
+              import: github.com/google/uuid
+              type: UUID
+              pointer: true
+          - db_type: timestamptz
+            go_type: time.Time
+          - db_type: timestamptz
+            nullable: true
+            go_type:
+              import: time
+              type: Time
+              pointer: true
+          - db_type: date
+            go_type: time.Time
+          - db_type: date
+            nullable: true
+            go_type:
+              import: time
+              type: Time
+              pointer: true
+          - db_type: jsonb
+            go_type: encoding/json.RawMessage

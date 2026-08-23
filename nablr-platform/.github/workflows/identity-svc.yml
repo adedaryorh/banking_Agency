@@ -1,0 +1,255 @@
+name: Go CI/CD with Systemd (identity-svc)
+
+on:
+  push:
+    branches:
+      - yak-deploy-stag
+    paths:
+      - 'services/identity-svc/**'
+      - '.github/workflows/identity-svc.yml'
+
+  workflow_dispatch:
+
+env:
+  APP_NAME_IDENTITY_SVC: ${{ secrets.APP_NAME_IDENTITY_SVC }}
+  GO_VERSION: "1.26.6"
+  RELEASES_DIRIDNT: ${{ secrets.RELEASES_DIRIDNT }}
+  CURRENT_DIRIDNT: ${{ secrets.CURRENT_DIRIDNT }}
+  BUILD_DIR: "/tmp/identity-svc-build"
+  ACTIVE_VERSION_FILEIDNT: ${{ secrets.ACTIVE_VERSION_FILEIDNT }}
+  ACTIVE_RELEASE_FILE: "${{ github.workspace }}/active_release"
+  GOVULNCHECK_VERSION: "v1.1.4"
+  GOWORK: "off"
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy Identity Service
+    runs-on: nablrmsvc
+    timeout-minutes: 10
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Validate Deployment Variables
+        run: |
+          set -euo pipefail
+          echo "Validating deployment variables"
+          test -n "${{ env.APP_NAME_IDENTITY_SVC }}"
+          test -n "${{ env.RELEASES_DIRIDNT }}"
+          test -n "${{ env.CURRENT_DIRIDNT }}"
+          test -n "${{ env.ACTIVE_VERSION_FILEIDNT }}"
+          echo "Deployment variables validated"
+      - name: Setup Go 1.26.6
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+          cache-dependency-path: services/identity-svc/go.sum
+
+      - name: Verify Go Environment
+        working-directory: services/identity-svc
+        run: |
+          set -euo pipefail
+          echo "========================================="
+          echo "Go Environment"
+          echo "========================================="
+          go version
+          go env GOROOT
+          go env GOPATH
+          echo "go.mod version"
+          grep "^go " go.mod || true
+      - name: Download Dependencies
+        working-directory: services/identity-svc
+        run: |
+          set -euo pipefail
+          go mod download
+          go mod verify
+      - name: Cache govulncheck binary
+        id: cache-govulncheck
+        uses: actions/cache@v4
+        with:
+          path: ~/go/bin/govulncheck
+          key: govulncheck-${{ runner.os }}-${{ env.GOVULNCHECK_VERSION }}
+
+      - name: Install govulncheck
+        if: steps.cache-govulncheck.outputs.cache-hit != 'true'
+        run: go install golang.org/x/vuln/cmd/govulncheck@${{ env.GOVULNCHECK_VERSION }}
+
+      - name: Run govulncheck (SAST-level vuln scan)
+        working-directory: services/identity-svc
+        run: |
+          set -euo pipefail
+          echo "Running govulncheck against notification-svc..."
+          ~/go/bin/govulncheck ./...
+      - name: Prepare Build Directory
+        run: |
+          set -euo pipefail
+          rm -rf "${{ env.BUILD_DIR }}"
+          mkdir -p "${{ env.BUILD_DIR }}"
+          echo "${{ github.sha }}" > "${{ env.BUILD_DIR }}/COMMIT_SHA"
+      - name: Create Environment File
+        env:
+          SECRET_ENV: ${{ secrets.IDENTITY_SVC_ENV_FILE }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$SECRET_ENV" \
+            > "${{ env.BUILD_DIR }}/.env"
+          chmod 600 "${{ env.BUILD_DIR }}/.env"
+      - name: Build Identity Service Binary
+        working-directory: services/identity-svc
+        run: |
+          set -euo pipefail
+          echo "Building Identity Service binary..."
+          CGO_ENABLED=0 \
+          GOOS=linux \
+          GOARCH=amd64 \
+          go build \
+            -ldflags="-s -w" \
+            -o "${{ env.BUILD_DIR }}/${{ env.APP_NAME_IDENTITY_SVC }}" \
+            ./cmd
+          chmod +x "${{ env.BUILD_DIR }}/${{ env.APP_NAME_IDENTITY_SVC }}"
+          echo "Identity Service build complete"
+      - name: Verify Build Output
+        run: |
+          set -euo pipefail
+          echo "Build output"
+          ls -lah "${{ env.BUILD_DIR }}"
+          test -f "${{ env.BUILD_DIR }}/${{ env.APP_NAME_IDENTITY_SVC }}"
+          test -f "${{ env.BUILD_DIR }}/COMMIT_SHA"
+          test -f "${{ env.BUILD_DIR }}/.env"
+          test -x "${{ env.BUILD_DIR }}/${{ env.APP_NAME_IDENTITY_SVC }}"
+          echo "Build validated"
+      - name: Create Release
+        run: |
+          set -euo pipefail
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          RELEASE_PATH="${{ env.RELEASES_DIRIDNT }}/identity-svc-${TIMESTAMP}"
+          echo "Creating release at:"
+          echo "$RELEASE_PATH"
+          mkdir -p "$RELEASE_PATH"
+          # Copy Identity Service binary
+          install -m755 \
+            "${{ env.BUILD_DIR }}/${{ env.APP_NAME_IDENTITY_SVC }}" \
+            "$RELEASE_PATH/${{ env.APP_NAME_IDENTITY_SVC }}"
+          # Copy commit SHA
+          cp \
+            "${{ env.BUILD_DIR }}/COMMIT_SHA" \
+            "$RELEASE_PATH/COMMIT_SHA"
+          # Copy environment
+          cp \
+            "${{ env.BUILD_DIR }}/.env" \
+            "$RELEASE_PATH/.env"
+          # Copy SQL migrations
+          # cp -r \
+          #   "${{ github.workspace }}/services/migrations" \
+          #   "$RELEASE_PATH/migrations"
+          # Write active release path
+          echo "$RELEASE_PATH" > "${{ env.ACTIVE_RELEASE_FILE }}"
+          echo "Release created"
+      - name: Validate Release
+        run: |
+          set -euo pipefail
+          RELEASE_PATH=$(cat "${{ env.ACTIVE_RELEASE_FILE }}")
+          echo "Validating release:"
+          echo "$RELEASE_PATH"
+          test -d "$RELEASE_PATH"
+          test -f \
+            "$RELEASE_PATH/${{ env.APP_NAME_IDENTITY_SVC }}"
+          test -f \
+            "$RELEASE_PATH/COMMIT_SHA"
+          test -f \
+            "$RELEASE_PATH/.env"
+          # test -d \
+          #   "$RELEASE_PATH/migrations"
+          # test -f \
+          #   "$RELEASE_PATH/migrations/*.sql"
+          test -x \
+            "$RELEASE_PATH/${{ env.APP_NAME_IDENTITY_SVC }}"
+          RELEASE_SHA=$(cat "$RELEASE_PATH/COMMIT_SHA")
+          if [ "$RELEASE_SHA" != "${{ github.sha }}" ]; then
+            echo "Release SHA mismatch"
+            echo "Expected: ${{ github.sha }}"
+            echo "Actual:   $RELEASE_SHA"
+            exit 1
+          fi
+          echo "Release validation passed"
+      # Enable this only when you have a migration mechanism ready.
+      #
+      # - name: Run Database Migrations
+      #   run: |
+      #     set -euo pipefail
+      #
+      #     RELEASE_PATH=$(cat "${{ env.ACTIVE_RELEASE_FILE }}")
+      #
+      #     echo "Running database migrations..."
+      #
+      #     cd "$RELEASE_PATH"
+      #
+      #     ./migration -dir ./migrations up
+
+      - name: Switch Symlink
+        run: |
+          set -euo pipefail
+          RELEASE_PATH=$(cat "${{ env.ACTIVE_RELEASE_FILE }}")
+          ln -sfn \
+            "$RELEASE_PATH" \
+            "${{ env.CURRENT_DIRIDNT }}"
+          echo "$RELEASE_PATH" \
+            | tee "${{ env.ACTIVE_VERSION_FILEIDNT }}"
+          echo "Symlink switched"
+      - name: Restart Identity Service
+        run: |
+          set -euo pipefail
+          sudo systemctl stop "${{ env.APP_NAME_IDENTITY_SVC }}" || true
+          sleep 3
+          sudo systemctl daemon-reload
+          sudo systemctl start "${{ env.APP_NAME_IDENTITY_SVC }}"
+          sleep 5
+      - name: Verify Running Version
+        run: |
+          set -euo pipefail
+          ACTIVE_SHA=$(
+            cat "${{ env.CURRENT_DIRIDNT }}/COMMIT_SHA"
+          )
+          if [ "$ACTIVE_SHA" != "${{ github.sha }}" ]; then
+            echo "Running version mismatch"
+            echo "Expected: ${{ github.sha }}"
+            echo "Actual:   $ACTIVE_SHA"
+            exit 1
+          fi
+          echo "Running version verified"
+      - name: Cleanup Old Releases
+        run: |
+          set -euo pipefail
+          cd "${{ env.RELEASES_DIRIDNT }}"
+          KEEP=3
+          ls -1dt identity-svc-* 2>/dev/null \
+            | tail -n +$((KEEP+1)) \
+            | xargs -r rm -rf
+          echo "Cleanup complete"
+      - name: Deployment Summary
+        run: |
+          set -euo pipefail
+          ACTIVE=$(
+            cat "${{ env.ACTIVE_VERSION_FILEIDNT }}" 2>/dev/null \
+            || echo "unknown"
+          )
+          RELEASE=$(
+            cat "${{ env.ACTIVE_RELEASE_FILE }}" 2>/dev/null \
+            || echo "unknown"
+          )
+          SHA=$(
+            cat "$RELEASE/COMMIT_SHA" 2>/dev/null \
+            || echo "unknown"
+          )
+          echo "========================================="
+          echo "     IDENTITY SERVICE DEPLOYMENT SUCCESS"
+          echo "========================================="
+          echo "Application: ${{ env.APP_NAME_IDENTITY_SVC }}"
+          echo "Commit SHA:  $SHA"
+          echo "Active:      $ACTIVE"
+          echo "Release:     $RELEASE"
+          echo "Server:      $(hostname)"
+          echo "========================================="

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base64 Photo Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .input-section {
+            margin-bottom: 30px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .button-group {
+            margin: 20px 0;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .clear-btn {
+            background-color: #6c757d;
+        }
+        .clear-btn:hover {
+            background-color: #545b62;
+        }
+        .image-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .loading {
+            color: #007bff;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📸 Base64 Photo Converter</h1>
+        
+        <div class="input-section">
+            <label for="base64Input">Paste Base64 Photo String:</label>
+            <textarea 
+                id="base64Input" 
+                placeholder="Paste your base64 encoded photo here (e.g., /9j/4AAQSkZJRgAB...)"></textarea>
+        </div>
+
+        <div class="input-section">
+            <label for="apiEndpoint">API Endpoint:</label>
+            <input 
+                type="text" 
+                id="apiEndpoint" 
+                value="http://localhost:8080/api/v1/kyc/convert-photo"
+                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+        </div>
+
+        <div class="input-section">
+            <label for="authToken">JWT Token (if required):</label>
+            <input 
+                type="text" 
+                id="authToken" 
+                placeholder="Bearer token (optional)"
+                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+        </div>
+
+        <div class="button-group">
+            <button onclick="convertPhoto()">Convert to Image</button>
+            <button class="clear-btn" onclick="clearAll()">Clear All</button>
+        </div>
+
+        <div id="message"></div>
+        <div id="imageResult" class="image-container"></div>
+    </div>
+
+    <script>
+        async function convertPhoto() {
+            const base64Data = document.getElementById('base64Input').value.trim();
+            const endpoint = document.getElementById('apiEndpoint').value.trim();
+            const token = document.getElementById('authToken').value.trim();
+            const messageDiv = document.getElementById('message');
+            const imageDiv = document.getElementById('imageResult');
+
+            // Clear previous results
+            messageDiv.innerHTML = '';
+            imageDiv.innerHTML = '';
+
+            // Validate input
+            if (!base64Data) {
+                messageDiv.innerHTML = '<div class="error">Please paste a base64 string</div>';
+                return;
+            }
+
+            if (!endpoint) {
+                messageDiv.innerHTML = '<div class="error">Please provide an API endpoint</div>';
+                return;
+            }
+
+            // Show loading
+            messageDiv.innerHTML = '<div class="loading">Converting photo...</div>';
+
+            try {
+                // Prepare headers
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+
+                if (token) {
+                    headers['Authorization'] = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+                }
+
+                // Make API request
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify({
+                        base64_data: base64Data
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Server error (${response.status}): ${errorText}`);
+                }
+
+                // Get the image blob
+                const blob = await response.blob();
+                const imageUrl = URL.createObjectURL(blob);
+
+                // Display the image
+                imageDiv.innerHTML = `
+                    <h3>Converted Image:</h3>
+                    <img src="${imageUrl}" alt="Converted Photo" />
+                    <div style="margin-top: 20px;">
+                        <a href="${imageUrl}" download="photo.jpg" style="
+                            display: inline-block;
+                            background-color: #28a745;
+                            color: white;
+                            padding: 10px 20px;
+                            text-decoration: none;
+                            border-radius: 4px;
+                        ">Download Image</a>
+                    </div>
+                `;
+
+                messageDiv.innerHTML = '<div class="success">✅ Photo converted successfully!</div>';
+            } catch (error) {
+                messageDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+                console.error('Conversion error:', error);
+            }
+        }
+
+        function clearAll() {
+            document.getElementById('base64Input').value = '';
+            document.getElementById('message').innerHTML = '';
+            document.getElementById('imageResult').innerHTML = '';
+        }
+
+        // Handle Enter key in textarea (Ctrl/Cmd + Enter to convert)
+        document.getElementById('base64Input').addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                convertPhoto();
+            }
+        });
+    </script>
+</body>
+</html>

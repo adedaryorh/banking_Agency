@@ -1,0 +1,10 @@
+go 1.26.6
+
+toolchain go1.26.6
+
+use (
+	./services/api-gateway
+	./services/identity-svc
+	./services/notification-svc
+	./services/transfers-svc
+)

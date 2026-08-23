@@ -1,0 +1,231 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "Internal SMS, email, and push notification APIs.",
+        "title": "Nabla Notification Service API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "basePath": "/",
+    "paths": {
+        "/health": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Health check",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/internal/v1/email": {
+            "post": {
+                "security": [
+                    {
+                        "InternalServiceToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Internal Notifications"
+                ],
+                "summary": "Send email",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Internal service token",
+                        "name": "X-Internal-Service-Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Email payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/providers.EmailMessage"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/internal/v1/push": {
+            "post": {
+                "security": [
+                    {
+                        "InternalServiceToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Internal Notifications"
+                ],
+                "summary": "Send push notification",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Internal service token",
+                        "name": "X-Internal-Service-Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Push payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/providers.PushMessage"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/internal/v1/sms": {
+            "post": {
+                "security": [
+                    {
+                        "InternalServiceToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Internal Notifications"
+                ],
+                "summary": "Send SMS",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Internal service token",
+                        "name": "X-Internal-Service-Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "SMS payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/providers.SMSMessage"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "providers.EmailMessage": {
+            "type": "object",
+            "properties": {
+                "html": {
+                    "type": "string"
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "to": {
+                    "type": "string"
+                }
+            }
+        },
+        "providers.PushMessage": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "device_token": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "providers.SMSMessage": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "sender": {
+                    "type": "string"
+                },
+                "to": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "InternalServiceToken": {
+            "type": "apiKey",
+            "name": "X-Internal-Service-Token",
+            "in": "header"
+        }
+    }
+}

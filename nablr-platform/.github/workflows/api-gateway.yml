@@ -1,0 +1,255 @@
+name: Go CI/CD with Systemd (api-gateway).
+
+on:
+  push:
+    branches:
+      - yak-deploy-stag
+    paths:
+      - 'services/api-gateway/**'
+      - '.github/workflows/api-gateway.yml'
+
+  workflow_dispatch:
+
+env:
+  APP_NAME_API_GATEWAY: ${{ secrets.APP_NAME_API_GATEWAY }}
+  GO_VERSION: "1.26.6"
+  RELEASES_DIR: ${{ secrets.RELEASES_DIR }}
+  CURRENT_DIR: ${{ secrets.CURRENT_DIR }}
+  BUILD_DIR: "/tmp/api-gateway-build"
+  ACTIVE_VERSION_FILE: ${{ secrets.ACTIVE_VERSION_FILE }}
+  ACTIVE_RELEASE_FILE: "${{ github.workspace }}/active_release"
+  GOVULNCHECK_VERSION: "v1.1.4"
+  GOWORK: "off"
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy API Gateway
+    runs-on: nablrmsvc
+    timeout-minutes: 10
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Validate Deployment Variables
+        run: |
+          set -euo pipefail
+          echo "Validating deployment variables"
+          test -n "${{ env.APP_NAME_API_GATEWAY }}"
+          test -n "${{ env.RELEASES_DIR }}"
+          test -n "${{ env.CURRENT_DIR }}"
+          test -n "${{ env.ACTIVE_VERSION_FILE }}"
+          echo "Deployment variables validated"
+      - name: Setup Go 1.26.6
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+          cache-dependency-path: services/api-gateway/go.sum
+
+      - name: Verify Go Environment
+        working-directory: services/api-gateway
+        run: |
+          set -euo pipefail
+          echo "========================================="
+          echo "Go Environment"
+          echo "========================================="
+          go version
+          go env GOROOT
+          go env GOPATH
+          echo "go.mod version"
+          grep "^go " go.mod || true
+      - name: Download Dependencies
+        working-directory: services/api-gateway
+        run: |
+          set -euo pipefail
+          go mod download
+          go mod verify
+      - name: Cache govulncheck binary
+        id: cache-govulncheck
+        uses: actions/cache@v4
+        with:
+          path: ~/go/bin/govulncheck
+          key: govulncheck-${{ runner.os }}-${{ env.GOVULNCHECK_VERSION }}
+
+      - name: Install govulncheck
+        if: steps.cache-govulncheck.outputs.cache-hit != 'true'
+        run: go install golang.org/x/vuln/cmd/govulncheck@${{ env.GOVULNCHECK_VERSION }}
+
+      - name: Run govulncheck (SAST-level vuln scan)
+        working-directory: services/api-gateway
+        run: |
+          set -euo pipefail
+          echo "Running govulncheck against api_gateway-svc..."
+          ~/go/bin/govulncheck ./...
+      - name: Prepare Build Directory
+        run: |
+          set -euo pipefail
+          rm -rf "${{ env.BUILD_DIR }}"
+          mkdir -p "${{ env.BUILD_DIR }}"
+          echo "${{ github.sha }}" > "${{ env.BUILD_DIR }}/COMMIT_SHA"
+      - name: Create Environment File
+        env:
+          SECRET_ENV: ${{ secrets.API_GATEWAY_ENV_FILE }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$SECRET_ENV" \
+            > "${{ env.BUILD_DIR }}/.env"
+          chmod 600 "${{ env.BUILD_DIR }}/.env"
+      - name: Build API Gateway Binary
+        working-directory: services/api-gateway
+        run: |
+          set -euo pipefail
+          echo "Building API Gateway binary..."
+          CGO_ENABLED=0 \
+          GOOS=linux \
+          GOARCH=amd64 \
+          go build \
+            -ldflags="-s -w" \
+            -o "${{ env.BUILD_DIR }}/${{ env.APP_NAME_API_GATEWAY }}" \
+            ./cmd
+          chmod +x "${{ env.BUILD_DIR }}/${{ env.APP_NAME_API_GATEWAY }}"
+          echo "API Gateway build complete"
+      - name: Verify Build Output
+        run: |
+          set -euo pipefail
+          echo "Build output"
+          ls -lah "${{ env.BUILD_DIR }}"
+          test -f "${{ env.BUILD_DIR }}/${{ env.APP_NAME_API_GATEWAY }}"
+          test -f "${{ env.BUILD_DIR }}/COMMIT_SHA"
+          test -f "${{ env.BUILD_DIR }}/.env"
+          test -x "${{ env.BUILD_DIR }}/${{ env.APP_NAME_API_GATEWAY }}"
+          echo "Build validated"
+      - name: Create Release
+        run: |
+          set -euo pipefail
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          RELEASE_PATH="${{ env.RELEASES_DIR }}/api-gateway-${TIMESTAMP}"
+          echo "Creating release at:"
+          echo "$RELEASE_PATH"
+          mkdir -p "$RELEASE_PATH"
+          # Copy API Gateway binary
+          install -m755 \
+            "${{ env.BUILD_DIR }}/${{ env.APP_NAME_API_GATEWAY }}" \
+            "$RELEASE_PATH/${{ env.APP_NAME_API_GATEWAY }}"
+          # Copy commit SHA
+          cp \
+            "${{ env.BUILD_DIR }}/COMMIT_SHA" \
+            "$RELEASE_PATH/COMMIT_SHA"
+          # Copy environment
+          cp \
+            "${{ env.BUILD_DIR }}/.env" \
+            "$RELEASE_PATH/.env"
+          # Copy SQL migrations
+          # cp -r \
+          #   "${{ github.workspace }}/services/migrations" \
+          #   "$RELEASE_PATH/migrations"
+          # Write active release path
+          echo "$RELEASE_PATH" > "${{ env.ACTIVE_RELEASE_FILE }}"
+          echo "Release created"
+      - name: Validate Release
+        run: |
+          set -euo pipefail
+          RELEASE_PATH=$(cat "${{ env.ACTIVE_RELEASE_FILE }}")
+          echo "Validating release:"
+          echo "$RELEASE_PATH"
+          test -d "$RELEASE_PATH"
+          test -f \
+            "$RELEASE_PATH/${{ env.APP_NAME_API_GATEWAY }}"
+          test -f \
+            "$RELEASE_PATH/COMMIT_SHA"
+          test -f \
+            "$RELEASE_PATH/.env"
+          # test -d \
+          #   "$RELEASE_PATH/migrations"
+          # test -f \
+          #   "$RELEASE_PATH/migrations/*.sql"
+          test -x \
+            "$RELEASE_PATH/${{ env.APP_NAME_API_GATEWAY }}"
+          RELEASE_SHA=$(cat "$RELEASE_PATH/COMMIT_SHA")
+          if [ "$RELEASE_SHA" != "${{ github.sha }}" ]; then
+            echo "Release SHA mismatch"
+            echo "Expected: ${{ github.sha }}"
+            echo "Actual:   $RELEASE_SHA"
+            exit 1
+          fi
+          echo "Release validation passed"
+      # Enable this only when you have a migration mechanism ready.
+      #
+      # - name: Run Database Migrations
+      #   run: |
+      #     set -euo pipefail
+      #
+      #     RELEASE_PATH=$(cat "${{ env.ACTIVE_RELEASE_FILE }}")
+      #
+      #     echo "Running database migrations..."
+      #
+      #     cd "$RELEASE_PATH"
+      #
+      #     ./migration -dir ./migrations up
+
+      - name: Switch Symlink
+        run: |
+          set -euo pipefail
+          RELEASE_PATH=$(cat "${{ env.ACTIVE_RELEASE_FILE }}")
+          ln -sfn \
+            "$RELEASE_PATH" \
+            "${{ env.CURRENT_DIR }}"
+          echo "$RELEASE_PATH" \
+            | tee "${{ env.ACTIVE_VERSION_FILE }}"
+          echo "Symlink switched"
+      - name: Restart API Gateway Service
+        run: |
+          set -euo pipefail
+          sudo systemctl stop "${{ env.APP_NAME_API_GATEWAY }}" || true
+          sleep 3
+          sudo systemctl daemon-reload
+          sudo systemctl start "${{ env.APP_NAME_API_GATEWAY }}"
+          sleep 5
+      - name: Verify Running Version
+        run: |
+          set -euo pipefail
+          ACTIVE_SHA=$(
+            cat "${{ env.CURRENT_DIR }}/COMMIT_SHA"
+          )
+          if [ "$ACTIVE_SHA" != "${{ github.sha }}" ]; then
+            echo "Running version mismatch"
+            echo "Expected: ${{ github.sha }}"
+            echo "Actual:   $ACTIVE_SHA"
+            exit 1
+          fi
+          echo "Running version verified"
+      - name: Cleanup Old Releases
+        run: |
+          set -euo pipefail
+          cd "${{ env.RELEASES_DIR }}"
+          KEEP=3
+          ls -1dt api-gateway-* 2>/dev/null \
+            | tail -n +$((KEEP+1)) \
+            | xargs -r rm -rf
+          echo "Cleanup complete"
+      - name: Deployment Summary
+        run: |
+          set -euo pipefail
+          ACTIVE=$(
+            cat "${{ env.ACTIVE_VERSION_FILE }}" 2>/dev/null \
+            || echo "unknown"
+          )
+          RELEASE=$(
+            cat "${{ env.ACTIVE_RELEASE_FILE }}" 2>/dev/null \
+            || echo "unknown"
+          )
+          SHA=$(
+            cat "$RELEASE/COMMIT_SHA" 2>/dev/null \
+            || echo "unknown"
+          )
+          echo "========================================="
+          echo "       API GATEWAY DEPLOYMENT SUCCESS"
+          echo "========================================="
+          echo "Application: ${{ env.APP_NAME_API_GATEWAY }}"
+          echo "Commit SHA:  $SHA"
+          echo "Active:      $ACTIVE"
+          echo "Release:     $RELEASE"
+          echo "Server:      $(hostname)"
+          echo "========================================="

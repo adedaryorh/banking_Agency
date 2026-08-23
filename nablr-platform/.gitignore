@@ -1,0 +1,17 @@
+# Air tmp directory
+tmp/
+
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.log
+apps/api/bin/
+coverage/
+.DS_Store
+.gitkeep
+.idea/
+.claude/settings.json
+.claude/settings.json
+services/identity-svc/docs/identity-svc.postman_collection.json

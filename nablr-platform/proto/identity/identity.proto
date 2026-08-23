@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+package nabla.identity.v1;
+
+option go_package = "nabla/identity-svc/proto/identity;identity";
+
+import "google/protobuf/timestamp.proto";
+
+// IdentityService exposes internal identity, KYC, PIN and device operations
+// to trusted Nabla services. Calls to this service must be protected by a
+// service-authentication interceptor when the gRPC server is enabled.
+service IdentityService {
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc GetUserByPhone(GetUserByPhoneRequest) returns (GetUserResponse);
+  rpc GetKYCProfile(GetKYCProfileRequest) returns (GetKYCProfileResponse);
+  rpc ValidateKYCTier(ValidateKYCTierRequest) returns (ValidateKYCTierResponse);
+  rpc VerifyPIN(VerifyPINRequest) returns (VerifyPINResponse);
+  rpc SetPIN(SetPINRequest) returns (SetPINResponse);
+  rpc RegisterDevice(RegisterDeviceRequest) returns (RegisterDeviceResponse);
+  rpc ValidateDevice(ValidateDeviceRequest) returns (ValidateDeviceResponse);
+}
+
+message GetUserRequest {
+  string user_id = 1;
+}
+
+message GetUserByPhoneRequest {
+  string phone_number = 1;
+}
+
+message GetUserResponse {
+  string user_id = 1;
+  string email = 2;
+  string phone_number = 3;
+  string role = 4;
+  string status = 5;
+  bool phone_verified = 6;
+  bool password_set = 7;
+  google.protobuf.Timestamp email_verified_at = 8;
+  google.protobuf.Timestamp phone_verified_at = 9;
+  google.protobuf.Timestamp created_at = 10;
+}
+
+message GetKYCProfileRequest {
+  string user_id = 1;
+}
+
+message GetKYCProfileResponse {
+  string user_id = 1;
+  int32 tier = 2;
+  string first_name = 3;
+  string middle_name = 4;
+  string last_name = 5;
+  string phone_number = 6;
+  string phone_status = 7;
+  string bvn_status = 8;
+  string nin_status = 9;
+  bool sanctioned = 10;
+  bool pep = 11;
+}
+
+message ValidateKYCTierRequest {
+  string user_id = 1;
+  int32 required_tier = 2;
+}
+
+message ValidateKYCTierResponse {
+  bool valid = 1;
+  int32 current_tier = 2;
+  string message = 3;
+}
+
+message VerifyPINRequest {
+  string user_id = 1;
+  string pin = 2;
+}
+
+message VerifyPINResponse {
+  bool valid = 1;
+  string message = 2;
+}
+
+message SetPINRequest {
+  string user_id = 1;
+  string pin = 2;
+}
+
+message SetPINResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message RegisterDeviceRequest {
+  string user_id = 1;
+  string device_id = 2;
+  string device_name = 3;
+  string device_type = 4;
+  string fcm_token = 5;
+}
+
+message RegisterDeviceResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ValidateDeviceRequest {
+  string user_id = 1;
+  string device_id = 2;
+}
+
+message ValidateDeviceResponse {
+  bool valid = 1;
+  bool trusted = 2;
+  string message = 3;
+}

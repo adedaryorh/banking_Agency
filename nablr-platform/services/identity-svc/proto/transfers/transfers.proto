@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package nabla.transfers.v1;
+option go_package = "nabla/transfers-svc/proto/transfers;transfers";
+
+service TransfersService {
+  rpc GetWallet(GetWalletRequest) returns (WalletResponse);
+  rpc GetTransfer(GetTransferRequest) returns (TransferResponse);
+  rpc ProvisionCustomer(ProvisionCustomerRequest) returns (ProvisionCustomerResponse);
+}
+
+message GetWalletRequest { string user_id = 1; string currency = 2; }
+message WalletResponse { string wallet_id = 1; string user_id = 2; string currency = 3; int64 available_minor = 4; int64 reserved_minor = 5; string status = 6; }
+message GetTransferRequest { string user_id = 1; string transfer_id = 2; }
+message TransferResponse { string transfer_id = 1; string reference = 2; string status = 3; int64 amount_minor = 4; string currency = 5; }
+message ProvisionCustomerRequest { string user_id = 1; string currency = 2; }
+message ProvisionCustomerResponse {
+  string wallet_id = 1;
+  string account_number = 2;
+  string account_name = 3;
+  string bank_name = 4;
+  string bank_code = 5;
+  string currency = 6;
+}

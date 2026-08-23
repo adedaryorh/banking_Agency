@@ -1,0 +1,279 @@
+name: Go CI/CD with Systemd (notification-svc)
+
+on:
+  push:
+    branches:
+      - yak-deploy-stag
+    paths:
+      - 'services/notification-svc/**'
+      - '.github/workflows/notification-svc.yml'
+
+  workflow_dispatch:
+
+env:
+  APP_NAME_NOTIFICATION_SVC: notification_svc
+  GO_VERSION: "1.26.6"
+  RELEASES_DIRNOT: ${{ secrets.RELEASES_DIRNOT }}
+  CURRENT_DIRNOT: ${{ secrets.CURRENT_DIRNOT }}
+  BUILD_DIR: "/tmp/notification-svc-build"
+  ACTIVE_VERSION_FILENOT: ${{ secrets.ACTIVE_VERSION_FILENOT }}
+  ACTIVE_RELEASE_FILE: "${{ github.workspace }}/active_release"
+  GOVULNCHECK_VERSION: "v1.1.4"
+  GOWORK: "off"
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy Notification Service
+    runs-on: nablrmsvc
+    timeout-minutes: 10
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Validate Deployment Variables
+        run: |
+          set -euo pipefail
+          echo "Validating deployment variables"
+          test -n "$APP_NAME_NOTIFICATION_SVC"
+          test -n "$RELEASES_DIRNOT"
+          test -n "$CURRENT_DIRNOT"
+          test -n "$ACTIVE_VERSION_FILENOT"
+          case "$APP_NAME_NOTIFICATION_SVC" in
+            *[!A-Za-z0-9._-]*)
+              echo "APP_NAME_NOTIFICATION_SVC must be a simple systemd/binary name like notification_svc or notification-svc"
+              exit 1
+              ;;
+          esac
+          if [ "${#APP_NAME_NOTIFICATION_SVC}" -gt 64 ]; then
+            echo "APP_NAME_NOTIFICATION_SVC is too long. Use a short binary/service name like notification_svc."
+            exit 1
+          fi
+          echo "Deployment variables validated"
+
+      - name: Setup Go 1.26.6
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+          cache-dependency-path: services/notification-svc/go.sum
+
+      - name: Verify Go Environment
+        working-directory: services/notification-svc
+        run: |
+          set -euo pipefail
+          echo "========================================="
+          echo "Go Environment"
+          echo "========================================="
+          go version
+          go env GOROOT
+          go env GOPATH
+          echo "go.mod version"
+          grep "^go " go.mod || true
+
+      - name: Download Dependencies
+        working-directory: services/notification-svc
+        run: |
+          set -euo pipefail
+          go mod download
+          go mod verify
+
+      - name: Cache govulncheck binary
+        id: cache-govulncheck
+        uses: actions/cache@v4
+        with:
+          path: ~/go/bin/govulncheck
+          key: govulncheck-${{ runner.os }}-${{ env.GOVULNCHECK_VERSION }}
+
+      - name: Install govulncheck
+        if: steps.cache-govulncheck.outputs.cache-hit != 'true'
+        run: go install golang.org/x/vuln/cmd/govulncheck@${{ env.GOVULNCHECK_VERSION }}
+
+      - name: Run govulncheck (SAST-level vuln scan)
+        working-directory: services/notification-svc
+        run: |
+          set -euo pipefail
+          echo "Running govulncheck against notification-svc..."
+          ~/go/bin/govulncheck ./...
+
+      - name: Prepare Build Directory
+        run: |
+          set -euo pipefail
+          rm -rf "$BUILD_DIR"
+          mkdir -p "$BUILD_DIR"
+          echo "$GITHUB_SHA" > "$BUILD_DIR/COMMIT_SHA"
+
+      - name: Create Environment File
+        env:
+          SECRET_ENV: ${{ secrets.NOTIFICATION_SVC_ENV_FILE }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$SECRET_ENV" \
+            > "$BUILD_DIR/.env"
+          chmod 600 "$BUILD_DIR/.env"
+
+      - name: Build Notification Service Binary
+        working-directory: services/notification-svc
+        run: |
+          set -euo pipefail
+          echo "Building Notification Service binary..."
+          CGO_ENABLED=0 \
+          GOOS=linux \
+          GOARCH=amd64 \
+          go build \
+            -ldflags="-s -w" \
+            -o "$BUILD_DIR/$APP_NAME_NOTIFICATION_SVC" \
+            ./cmd
+          chmod +x "$BUILD_DIR/$APP_NAME_NOTIFICATION_SVC"
+          echo "Notification Service build complete"
+
+      - name: Verify Build Output
+        run: |
+          set -euo pipefail
+          echo "Build output"
+          ls -lah "$BUILD_DIR"
+          test -f "$BUILD_DIR/$APP_NAME_NOTIFICATION_SVC"
+          test -f "$BUILD_DIR/COMMIT_SHA"
+          test -f "$BUILD_DIR/.env"
+          test -x "$BUILD_DIR/$APP_NAME_NOTIFICATION_SVC"
+          echo "Build validated"
+
+      - name: Create Release
+        run: |
+          set -euo pipefail
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          RELEASE_PATH="$RELEASES_DIRNOT/notification-svc-${TIMESTAMP}"
+          echo "Creating release at:"
+          echo "$RELEASE_PATH"
+          mkdir -p "$RELEASE_PATH"
+          # Copy Notification Service binary
+          install -m755 \
+            "$BUILD_DIR/$APP_NAME_NOTIFICATION_SVC" \
+            "$RELEASE_PATH/$APP_NAME_NOTIFICATION_SVC"
+          # Copy commit SHA
+          cp \
+            "$BUILD_DIR/COMMIT_SHA" \
+            "$RELEASE_PATH/COMMIT_SHA"
+          # Copy environment
+          cp \
+            "$BUILD_DIR/.env" \
+            "$RELEASE_PATH/.env"
+          # Copy SQL migrations
+          # cp -r \
+          #   "${{ github.workspace }}/services/migrations" \
+          #   "$RELEASE_PATH/migrations"
+          # Write active release path
+          echo "$RELEASE_PATH" > "$ACTIVE_RELEASE_FILE"
+          echo "Release created"
+
+      - name: Validate Release
+        run: |
+          set -euo pipefail
+          RELEASE_PATH=$(cat "$ACTIVE_RELEASE_FILE")
+          echo "Validating release:"
+          echo "$RELEASE_PATH"
+          test -d "$RELEASE_PATH"
+          test -f \
+            "$RELEASE_PATH/$APP_NAME_NOTIFICATION_SVC"
+          test -f \
+            "$RELEASE_PATH/COMMIT_SHA"
+          test -f \
+            "$RELEASE_PATH/.env"
+          # test -d \
+          #   "$RELEASE_PATH/migrations"
+          # test -f \
+          #   "$RELEASE_PATH/migrations/*.sql"
+          test -x \
+            "$RELEASE_PATH/$APP_NAME_NOTIFICATION_SVC"
+          RELEASE_SHA=$(cat "$RELEASE_PATH/COMMIT_SHA")
+          if [ "$RELEASE_SHA" != "$GITHUB_SHA" ]; then
+            echo "Release SHA mismatch"
+            echo "Expected: $GITHUB_SHA"
+            echo "Actual:   $RELEASE_SHA"
+            exit 1
+          fi
+          echo "Release validation passed"
+
+      # Enable this only when you have a migration mechanism ready.
+      #
+      # - name: Run Database Migrations
+      #   run: |
+      #     set -euo pipefail
+      #
+      #     RELEASE_PATH=$(cat "${{ env.ACTIVE_RELEASE_FILE }}")
+      #
+      #     echo "Running database migrations..."
+      #
+      #     cd "$RELEASE_PATH"
+      #
+      #     ./migration -dir ./migrations up
+
+      - name: Switch Symlink
+        run: |
+          set -euo pipefail
+          RELEASE_PATH=$(cat "$ACTIVE_RELEASE_FILE")
+          ln -sfn \
+            "$RELEASE_PATH" \
+            "$CURRENT_DIRNOT"
+          echo "$RELEASE_PATH" \
+            | tee "$ACTIVE_VERSION_FILENOT"
+          echo "Symlink switched"
+
+      - name: Restart Notification Service
+        run: |
+          set -euo pipefail
+          sudo systemctl stop "$APP_NAME_NOTIFICATION_SVC" || true
+          sleep 3
+          sudo systemctl daemon-reload
+          sudo systemctl start "$APP_NAME_NOTIFICATION_SVC"
+          sleep 5
+
+      - name: Verify Running Version
+        run: |
+          set -euo pipefail
+          ACTIVE_SHA=$(
+            cat "$CURRENT_DIRNOT/COMMIT_SHA"
+          )
+          if [ "$ACTIVE_SHA" != "$GITHUB_SHA" ]; then
+            echo "Running version mismatch"
+            echo "Expected: $GITHUB_SHA"
+            echo "Actual:   $ACTIVE_SHA"
+            exit 1
+          fi
+          echo "Running version verified"
+
+      - name: Cleanup Old Releases
+        run: |
+          set -euo pipefail
+          cd "$RELEASES_DIRNOT"
+          KEEP=3
+          ls -1dt notification-svc-* 2>/dev/null \
+            | tail -n +$((KEEP+1)) \
+            | xargs -r rm -rf
+          echo "Cleanup complete"
+
+      - name: Deployment Summary
+        run: |
+          set -euo pipefail
+          ACTIVE=$(
+            cat "$ACTIVE_VERSION_FILENOT" 2>/dev/null \
+            || echo "unknown"
+          )
+          RELEASE=$(
+            cat "$ACTIVE_RELEASE_FILE" 2>/dev/null \
+            || echo "unknown"
+          )
+          SHA=$(
+            cat "$RELEASE/COMMIT_SHA" 2>/dev/null \
+            || echo "unknown"
+          )
+          echo "========================================="
+          echo "   NOTIFICATION SERVICE DEPLOYMENT SUCCESS"
+          echo "========================================="
+          echo "Application: ${{ env.APP_NAME_NOTIFICATION_SVC }}"
+          echo "Commit SHA:  $SHA"
+          echo "Active:      $ACTIVE"
+          echo "Release:     $RELEASE"
+          echo "Server:      $(hostname)"
+          echo "========================================="

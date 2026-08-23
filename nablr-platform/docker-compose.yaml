@@ -1,0 +1,252 @@
+name: nablr-platform
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: nabla-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-docker}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-nabla}
+    ports:
+      - "5477:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-databases.sql:/docker-entrypoint-initdb.d/init-databases.sql
+      - ./services/identity-svc/db/schema.sql:/schemas/identity-schema.sql:ro
+      - ./services/notification-svc/db/schema.sql:/schemas/notification-schema.sql:ro
+      - ./services/transfers-svc/db/schema.sql:/schemas/transfers-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-docker} -d ${POSTGRES_DB:-nabla}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - nabla-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: nabla-redis
+    ports:
+      - "6477:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - nabla-network
+
+  # RabbitMQ Message Broker
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: nabla-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-nabla}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-nabla123}
+    ports:
+      - "5572:5672"   # AMQP port
+      - "15572:15672" # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - nabla-network
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: .
+      dockerfile: services/api-gateway/Dockerfile
+      target: dev
+    container_name: nabla-api-gateway
+    env_file:
+      - ./services/api-gateway/.env
+    volumes:
+      - ./services/api-gateway:/workspace/services/api-gateway
+    ports:
+      - "8770:8000" # Main entry point
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8000/health/ready"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    depends_on:
+      redis:
+        condition: service_healthy
+      identity-svc:
+        condition: service_started
+    networks:
+      - nabla-network
+    restart: unless-stopped
+
+  # Identity Service
+  identity-svc:
+    build:
+      context: .
+      dockerfile: services/identity-svc/Dockerfile
+      target: dev
+    container_name: nabla-identity-svc
+    env_file:
+      - ./services/identity-svc/.env
+    environment:
+      DATABASE_URL: postgres://docker:password@postgres:5432/nabla_identity?sslmode=disable
+      REDIS_URL: redis:6379
+      NOTIFICATION_HTTP_URL: http://notification-svc:8004
+      TRANSFERS_GRPC_URL: transfers-svc:9002
+      RABBITMQ_URL: amqp://nabla:nabla123@rabbitmq:5672/
+    volumes:
+      - ./services/identity-svc:/workspace/services/identity-svc
+    ports:
+      - "8771:8001" # HTTP
+      - "9771:9001" # gRPC
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      notification-svc:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8001/health/ready"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    networks:
+      - nabla-network
+    restart: unless-stopped
+
+  # Transfers Service
+  transfers-svc:
+    build:
+      context: .
+      dockerfile: services/transfers-svc/Dockerfile
+      target: dev
+    container_name: nabla-transfers-svc
+    env_file:
+      - ./services/transfers-svc/.env
+    environment:
+      DATABASE_URL: postgres://docker:password@postgres:5432/nabla_transfers?sslmode=disable
+      TRANSFERS_HTTP_ADDRESS: ":8002"
+      TRANSFERS_GRPC_ADDRESS: ":9002"
+      RABBITMQ_URL: amqp://nabla:nabla123@rabbitmq:5672/
+    volumes:
+      - ./services/transfers-svc:/workspace/services/transfers-svc
+    ports:
+      - "8772:8002" # HTTP
+      - "9772:9002" # gRPC
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8003/health/ready"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      identity-svc:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - nabla-network
+    restart: unless-stopped
+  #
+  transfers-worker:
+    build:
+      context: .
+      dockerfile: services/transfers-svc/Dockerfile
+    container_name: nabla-transfers-worker
+    entrypoint: ["transfers-worker"]
+    env_file:
+      - ./services/transfers-svc/.env
+    environment:
+      DATABASE_URL: postgres://docker:password@postgres:5432/nabla_transfers?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+      transfers-svc:
+        condition: service_started
+    networks:
+      - nabla-network
+    restart: unless-stopped
+
+  # VAS Service
+  # vas-svc:
+  #   build:
+  #     context: .
+  #     dockerfile: services/vas-svc/Dockerfile
+  #   container_name: nabla-vas-svc
+  #   env_file:
+  #     - ./services/vas-svc/.env
+  #   ports:
+  #     - "8003:8003" # HTTP
+  #     - "9003:9003" # gRPC
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #     transfers-svc:
+  #       condition: service_started
+  #   networks:
+  #     - nabla-network
+  #   restart: unless-stopped
+  #
+  # Notification Service
+  notification-svc:
+    build:
+      context: .
+      dockerfile: services/notification-svc/Dockerfile
+      target: dev
+    container_name: nabla-notification-svc
+    env_file:
+      - ./services/notification-svc/.env
+    environment:
+      DATABASE_URL: postgres://docker:password@postgres:5432/nabla_notification?sslmode=disable
+      RABBITMQ_URL: amqp://nabla:nabla123@rabbitmq:5672/
+    volumes:
+      - ./services/notification-svc:/workspace/services/notification-svc
+    ports:
+      - "8774:8004" # HTTP
+      - "9774:9004" # gRPC
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8004/health/ready"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - nabla-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+
+networks:
+  nabla-network:
+    driver: bridge

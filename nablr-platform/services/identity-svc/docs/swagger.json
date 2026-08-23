@@ -1,0 +1,2083 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "Identity, authentication, onboarding, KYC, device, and security APIs.",
+        "title": "Nabla Identity Service API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "basePath": "/",
+    "paths": {
+        "/api/v1/auth/forgot-password": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Forgot password",
+                "parameters": [
+                    {
+                        "description": "Forgot password payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ForgotPasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/login": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login with email or phone and password",
+                "parameters": [
+                    {
+                        "description": "Login payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/logout": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout",
+                "parameters": [
+                    {
+                        "description": "Logout payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LogoutRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/magic-link/confirm": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Confirm magic link",
+                "parameters": [
+                    {
+                        "description": "Magic link confirmation payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ConfirmMagicLinkRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/magic-link/request": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Request magic link",
+                "parameters": [
+                    {
+                        "description": "Magic link request payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MagicLinkRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/password/phone/confirm": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Confirm phone password reset",
+                "parameters": [
+                    {
+                        "description": "Phone password reset confirmation",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ConfirmPhonePasswordResetRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/password/phone/request": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Request phone password reset OTP",
+                "parameters": [
+                    {
+                        "description": "Phone password reset request",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PhonePasswordResetRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/refresh": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Refresh access token",
+                "parameters": [
+                    {
+                        "description": "Refresh token payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RefreshTokenRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/register": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register with email, phone, and password",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Confirmed waitlist reservation token used to claim the reserved Nablr username",
+                        "name": "X-Waitlist-Reservation-Token",
+                        "in": "header"
+                    },
+                    {
+                        "description": "Registration payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/resend-verification": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Resend email verification",
+                "parameters": [
+                    {
+                        "description": "Email payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ResendVerificationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/reset-password": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Reset password",
+                "parameters": [
+                    {
+                        "description": "Reset password payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ResetPasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/verify-email": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Verify email token",
+                "parameters": [
+                    {
+                        "description": "Email verification token",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.VerifyEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/kyc/address": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KYC"
+                ],
+                "summary": "Submit address",
+                "parameters": [
+                    {
+                        "description": "Address payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SubmitAddressRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/kyc/attempts": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KYC"
+                ],
+                "summary": "List KYC attempts",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/kyc/bvn": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KYC"
+                ],
+                "summary": "Submit authenticated BVN verification",
+                "parameters": [
+                    {
+                        "description": "BVN payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LookupBVNRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/kyc/details": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Calls the configured directory lookup provider. Send exactly one of phone_number, bvn, or nin. When nin is sent, the service returns the provider NIN lookup response.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KYC"
+                ],
+                "summary": "Lookup phone, BVN, or NIN details",
+                "parameters": [
+                    {
+                        "description": "KYC details lookup payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LookupKYCDetailsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/kyc/limits": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KYC"
+                ],
+                "summary": "Get transaction limits",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/kyc/nin": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KYC"
+                ],
+                "summary": "Submit authenticated NIN verification",
+                "parameters": [
+                    {
+                        "description": "NIN payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LookupNINDetailsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/kyc/profile": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KYC"
+                ],
+                "summary": "Get KYC profile",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/mobile/version/check": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Mobile"
+                ],
+                "summary": "Check mobile app version",
+                "parameters": [
+                    {
+                        "description": "Version check payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MobileVersionCheckRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/onboarding/details": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Uses the onboarding token instead of an access token. Send exactly one of phone_number, bvn, or nin.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Onboarding"
+                ],
+                "summary": "Lookup onboarding phone, BVN, or NIN details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer onboarding_token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Client device ID",
+                        "name": "X-Device-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Onboarding details lookup payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LookupKYCDetailsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/onboarding/device": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Onboarding"
+                ],
+                "summary": "Register onboarding device",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer onboarding_token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Client device ID",
+                        "name": "X-Device-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Device metadata payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.OnboardingDeviceRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/onboarding/facial-verification": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Onboarding"
+                ],
+                "summary": "Submit onboarding facial verification",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer onboarding_token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Client device ID",
+                        "name": "X-Device-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Optional provider verification request ID",
+                        "name": "X-Verification-Request-ID",
+                        "in": "header"
+                    },
+                    {
+                        "description": "Facial verification payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.FacialVerificationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/onboarding/nin": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Onboarding"
+                ],
+                "summary": "Submit onboarding NIN liveness verification",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer onboarding_token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Client device ID",
+                        "name": "X-Device-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Optional provider verification request ID",
+                        "name": "X-Verification-Request-ID",
+                        "in": "header"
+                    },
+                    {
+                        "description": "NIN liveness payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.VerifyNINRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/onboarding/otp/resend": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Onboarding"
+                ],
+                "summary": "Resend onboarding OTP",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer onboarding_token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Client device ID",
+                        "name": "X-Device-ID",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/onboarding/password": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Onboarding"
+                ],
+                "summary": "Complete onboarding 6-digit passcode setup",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer onboarding_token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Client device ID",
+                        "name": "X-Device-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "6-digit numeric passcode payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PhoneOnboardingPasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/onboarding/phone/confirm": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Onboarding"
+                ],
+                "summary": "Confirm onboarding phone OTP",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer onboarding_token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Client device ID",
+                        "name": "X-Device-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "OTP confirmation payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PhoneOnboardingConfirmRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/onboarding/register": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Onboarding"
+                ],
+                "summary": "Start phone onboarding",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Confirmed waitlist reservation token used to claim the reserved Nablr username",
+                        "name": "X-Waitlist-Reservation-Token",
+                        "in": "header"
+                    },
+                    {
+                        "description": "Phone and device metadata payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PhoneOnboardingRegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/onboarding/session/refresh": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Onboarding"
+                ],
+                "summary": "Refresh onboarding session",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Client device ID",
+                        "name": "X-Device-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Phone payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PhoneOnboardingRegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/onboarding/status": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Onboarding"
+                ],
+                "summary": "Get onboarding status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer onboarding_token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Client device ID",
+                        "name": "X-Device-ID",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/security/devices": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Security"
+                ],
+                "summary": "List user devices",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/security/devices/trust": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Security"
+                ],
+                "summary": "Trust device",
+                "parameters": [
+                    {
+                        "description": "Trust device payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.TrustDeviceRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/security/devices/{deviceId}/block": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Security"
+                ],
+                "summary": "Block device",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Device ID",
+                        "name": "deviceId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/security/otp/request": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Security"
+                ],
+                "summary": "Request security OTP",
+                "parameters": [
+                    {
+                        "description": "OTP request payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RequestOTPRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/security/phone/confirm": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Security"
+                ],
+                "summary": "Confirm security phone",
+                "parameters": [
+                    {
+                        "description": "Phone confirmation payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PhoneOnboardingConfirmRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/security/phone/verify": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Security"
+                ],
+                "summary": "Verify security phone",
+                "parameters": [
+                    {
+                        "description": "Phone verification payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.VerifyPhoneRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/security/pin": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Security"
+                ],
+                "summary": "Get PIN status",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Security"
+                ],
+                "summary": "Set PIN",
+                "parameters": [
+                    {
+                        "description": "PIN payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SetPINRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Security"
+                ],
+                "summary": "Change PIN",
+                "parameters": [
+                    {
+                        "description": "Change PIN payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ChangePINRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/security/pin/reset": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Security"
+                ],
+                "summary": "Reset PIN",
+                "parameters": [
+                    {
+                        "description": "Reset PIN payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ResetPINRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Health check",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.ChangePINRequest": {
+            "type": "object",
+            "required": [
+                "current_pin",
+                "new_pin"
+            ],
+            "properties": {
+                "current_pin": {
+                    "type": "string",
+                    "maxLength": 6,
+                    "minLength": 4
+                },
+                "new_pin": {
+                    "type": "string",
+                    "maxLength": 6,
+                    "minLength": 4
+                }
+            }
+        },
+        "models.ConfirmMagicLinkRequest": {
+            "type": "object",
+            "required": [
+                "token"
+            ],
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ConfirmPhonePasswordResetRequest": {
+            "type": "object",
+            "required": [
+                "challenge_token",
+                "code",
+                "new_password"
+            ],
+            "properties": {
+                "challenge_token": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "new_password": {
+                    "type": "string",
+                    "maxLength": 6,
+                    "minLength": 4
+                }
+            }
+        },
+        "models.DeviceMetadataRequest": {
+            "type": "object",
+            "properties": {
+                "deviceName": {
+                    "type": "string",
+                    "maxLength": 150,
+                    "example": "MacOs"
+                },
+                "latitude": {
+                    "type": "number",
+                    "maximum": 90,
+                    "minimum": -90,
+                    "example": 6.524379
+                },
+                "longitude": {
+                    "type": "number",
+                    "maximum": 180,
+                    "minimum": -180,
+                    "example": 3.379206
+                }
+            }
+        },
+        "models.FacialVerificationRequest": {
+            "type": "object",
+            "required": [
+                "liveness_frame_images_base64",
+                "selfie_image_base64"
+            ],
+            "properties": {
+                "encrypted_liveness_payload": {
+                    "type": "string",
+                    "maxLength": 65536
+                },
+                "liveness_frame_images_base64": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "selfie_image_base64": {
+                    "type": "string",
+                    "maxLength": 10485760
+                }
+            }
+        },
+        "models.ForgotPasswordRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 10
+                }
+            }
+        },
+        "models.LoginRequest": {
+            "type": "object",
+            "required": [
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 10
+                }
+            }
+        },
+        "models.LogoutRequest": {
+            "type": "object",
+            "required": [
+                "refresh_token"
+            ],
+            "properties": {
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.LookupBVNRequest": {
+            "type": "object",
+            "required": [
+                "bvn"
+            ],
+            "properties": {
+                "bvn": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.LookupKYCDetailsRequest": {
+            "type": "object",
+            "properties": {
+                "bvn": {
+                    "type": "string"
+                },
+                "nin": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 10
+                }
+            }
+        },
+        "models.LookupNINDetailsRequest": {
+            "type": "object",
+            "required": [
+                "nin"
+            ],
+            "properties": {
+                "nin": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.MagicLinkRequest": {
+            "type": "object",
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.MobileVersionCheckRequest": {
+            "type": "object",
+            "required": [
+                "platform",
+                "version"
+            ],
+            "properties": {
+                "build_number": {
+                    "type": "string",
+                    "maxLength": 40
+                },
+                "platform": {
+                    "type": "string",
+                    "maxLength": 40
+                },
+                "version": {
+                    "type": "string",
+                    "maxLength": 40
+                }
+            }
+        },
+        "models.OnboardingDeviceRequest": {
+            "type": "object",
+            "required": [
+                "deviceId"
+            ],
+            "properties": {
+                "deviceId": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "device30"
+                },
+                "deviceMetadata": {
+                    "$ref": "#/definitions/models.DeviceMetadataRequest"
+                }
+            }
+        },
+        "models.PhoneOnboardingConfirmRequest": {
+            "type": "object",
+            "required": [
+                "challenge_token",
+                "code"
+            ],
+            "properties": {
+                "challenge_token": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.PhoneOnboardingPasswordRequest": {
+            "type": "object",
+            "required": [
+                "password"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "example": "123456"
+                }
+            }
+        },
+        "models.PhoneOnboardingRegisterRequest": {
+            "type": "object",
+            "required": [
+                "phone_number"
+            ],
+            "properties": {
+                "deviceId": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "device30"
+                },
+                "deviceMetadata": {
+                    "$ref": "#/definitions/models.DeviceMetadataRequest"
+                },
+                "phone_number": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 10,
+                    "example": "08093536368"
+                }
+            }
+        },
+        "models.PhonePasswordResetRequest": {
+            "type": "object",
+            "required": [
+                "phone_number"
+            ],
+            "properties": {
+                "phone_number": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 10
+                }
+            }
+        },
+        "models.RefreshTokenRequest": {
+            "type": "object",
+            "required": [
+                "refresh_token"
+            ],
+            "properties": {
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RegisterRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "phone_number"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 10
+                }
+            }
+        },
+        "models.RequestOTPRequest": {
+            "type": "object",
+            "required": [
+                "purpose"
+            ],
+            "properties": {
+                "channel": {
+                    "type": "string",
+                    "enum": [
+                        "sms",
+                        "email"
+                    ]
+                },
+                "purpose": {
+                    "type": "string",
+                    "enum": [
+                        "phone_verification",
+                        "login",
+                        "new_device",
+                        "pin_reset",
+                        "pin_set",
+                        "high_value_transaction",
+                        "risk_challenge"
+                    ]
+                }
+            }
+        },
+        "models.ResendVerificationRequest": {
+            "type": "object",
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ResetPINRequest": {
+            "type": "object",
+            "required": [
+                "challenge_token",
+                "code",
+                "new_pin"
+            ],
+            "properties": {
+                "challenge_token": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string",
+                    "maxLength": 8,
+                    "minLength": 4
+                },
+                "new_pin": {
+                    "type": "string",
+                    "maxLength": 6,
+                    "minLength": 4
+                }
+            }
+        },
+        "models.ResetPasswordRequest": {
+            "type": "object",
+            "required": [
+                "new_password"
+            ],
+            "properties": {
+                "challenge_token": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "new_password": {
+                    "type": "string",
+                    "maxLength": 72,
+                    "minLength": 4
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SetPINRequest": {
+            "type": "object",
+            "required": [
+                "pin"
+            ],
+            "properties": {
+                "pin": {
+                    "type": "string",
+                    "maxLength": 6,
+                    "minLength": 4
+                }
+            }
+        },
+        "models.SubmitAddressRequest": {
+            "type": "object",
+            "required": [
+                "address_line1",
+                "city",
+                "state"
+            ],
+            "properties": {
+                "address_line1": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "address_line2": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "city": {
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "postal_code": {
+                    "type": "string",
+                    "maxLength": 20
+                },
+                "state": {
+                    "type": "string",
+                    "maxLength": 100
+                }
+            }
+        },
+        "models.TrustDeviceRequest": {
+            "type": "object",
+            "required": [
+                "device_id"
+            ],
+            "properties": {
+                "device_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 150
+                }
+            }
+        },
+        "models.VerifyEmailRequest": {
+            "type": "object",
+            "required": [
+                "token"
+            ],
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.VerifyNINRequest": {
+            "type": "object",
+            "required": [
+                "liveness_frame_images_base64",
+                "selfie_image_base64"
+            ],
+            "properties": {
+                "encrypted_liveness_payload": {
+                    "type": "string",
+                    "maxLength": 262144
+                },
+                "liveness_frame_images_base64": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "nin": {
+                    "type": "string"
+                },
+                "result_token": {
+                    "type": "string",
+                    "maxLength": 4096
+                },
+                "selfie_image_base64": {
+                    "type": "string",
+                    "maxLength": 10485760
+                }
+            }
+        },
+        "models.VerifyPhoneRequest": {
+            "type": "object",
+            "required": [
+                "phone_number"
+            ],
+            "properties": {
+                "phone_number": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 10
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

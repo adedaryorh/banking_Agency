@@ -1,0 +1,148 @@
+basePath: /
+definitions:
+  providers.EmailMessage:
+    properties:
+      html:
+        type: string
+      subject:
+        type: string
+      text:
+        type: string
+      to:
+        type: string
+    type: object
+  providers.PushMessage:
+    properties:
+      body:
+        type: string
+      data:
+        additionalProperties:
+          type: string
+        type: object
+      device_token:
+        type: string
+      title:
+        type: string
+    type: object
+  providers.SMSMessage:
+    properties:
+      body:
+        type: string
+      sender:
+        type: string
+      to:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Internal SMS, email, and push notification APIs.
+  title: Nabla Notification Service API
+  version: "1.0"
+paths:
+  /health:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Health check
+      tags:
+      - Health
+  /internal/v1/email:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Internal service token
+        in: header
+        name: X-Internal-Service-Token
+        required: true
+        type: string
+      - description: Email payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/providers.EmailMessage'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - InternalServiceToken: []
+      summary: Send email
+      tags:
+      - Internal Notifications
+  /internal/v1/push:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Internal service token
+        in: header
+        name: X-Internal-Service-Token
+        required: true
+        type: string
+      - description: Push payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/providers.PushMessage'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - InternalServiceToken: []
+      summary: Send push notification
+      tags:
+      - Internal Notifications
+  /internal/v1/sms:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Internal service token
+        in: header
+        name: X-Internal-Service-Token
+        required: true
+        type: string
+      - description: SMS payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/providers.SMSMessage'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - InternalServiceToken: []
+      summary: Send SMS
+      tags:
+      - Internal Notifications
+schemes:
+- http
+- https
+securityDefinitions:
+  InternalServiceToken:
+    in: header
+    name: X-Internal-Service-Token
+    type: apiKey
+swagger: "2.0"

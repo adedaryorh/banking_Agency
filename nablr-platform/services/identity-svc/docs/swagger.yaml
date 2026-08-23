@@ -1,0 +1,1358 @@
+basePath: /
+definitions:
+  models.ChangePINRequest:
+    properties:
+      current_pin:
+        maxLength: 6
+        minLength: 4
+        type: string
+      new_pin:
+        maxLength: 6
+        minLength: 4
+        type: string
+    required:
+    - current_pin
+    - new_pin
+    type: object
+  models.ConfirmMagicLinkRequest:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
+  models.ConfirmPhonePasswordResetRequest:
+    properties:
+      challenge_token:
+        type: string
+      code:
+        type: string
+      new_password:
+        maxLength: 6
+        minLength: 4
+        type: string
+    required:
+    - challenge_token
+    - code
+    - new_password
+    type: object
+  models.DeviceMetadataRequest:
+    properties:
+      deviceName:
+        example: MacOs
+        maxLength: 150
+        type: string
+      latitude:
+        example: 6.524379
+        maximum: 90
+        minimum: -90
+        type: number
+      longitude:
+        example: 3.379206
+        maximum: 180
+        minimum: -180
+        type: number
+    type: object
+  models.FacialVerificationRequest:
+    properties:
+      encrypted_liveness_payload:
+        maxLength: 65536
+        type: string
+      liveness_frame_images_base64:
+        items:
+          type: string
+        type: array
+      selfie_image_base64:
+        maxLength: 10485760
+        type: string
+    required:
+    - liveness_frame_images_base64
+    - selfie_image_base64
+    type: object
+  models.ForgotPasswordRequest:
+    properties:
+      email:
+        type: string
+      phone_number:
+        maxLength: 20
+        minLength: 10
+        type: string
+    type: object
+  models.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      phone_number:
+        maxLength: 20
+        minLength: 10
+        type: string
+    required:
+    - password
+    type: object
+  models.LogoutRequest:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  models.LookupBVNRequest:
+    properties:
+      bvn:
+        type: string
+    required:
+    - bvn
+    type: object
+  models.LookupKYCDetailsRequest:
+    properties:
+      bvn:
+        type: string
+      nin:
+        type: string
+      phone_number:
+        maxLength: 20
+        minLength: 10
+        type: string
+    type: object
+  models.LookupNINDetailsRequest:
+    properties:
+      nin:
+        type: string
+    required:
+    - nin
+    type: object
+  models.MagicLinkRequest:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
+  models.MobileVersionCheckRequest:
+    properties:
+      build_number:
+        maxLength: 40
+        type: string
+      platform:
+        maxLength: 40
+        type: string
+      version:
+        maxLength: 40
+        type: string
+    required:
+    - platform
+    - version
+    type: object
+  models.OnboardingDeviceRequest:
+    properties:
+      deviceId:
+        example: device30
+        maxLength: 255
+        type: string
+      deviceMetadata:
+        $ref: '#/definitions/models.DeviceMetadataRequest'
+    required:
+    - deviceId
+    type: object
+  models.PhoneOnboardingConfirmRequest:
+    properties:
+      challenge_token:
+        type: string
+      code:
+        type: string
+    required:
+    - challenge_token
+    - code
+    type: object
+  models.PhoneOnboardingPasswordRequest:
+    properties:
+      password:
+        example: "123456"
+        type: string
+    required:
+    - password
+    type: object
+  models.PhoneOnboardingRegisterRequest:
+    properties:
+      deviceId:
+        example: device30
+        maxLength: 255
+        type: string
+      deviceMetadata:
+        $ref: '#/definitions/models.DeviceMetadataRequest'
+      phone_number:
+        example: "08093536368"
+        maxLength: 20
+        minLength: 10
+        type: string
+    required:
+    - phone_number
+    type: object
+  models.PhonePasswordResetRequest:
+    properties:
+      phone_number:
+        maxLength: 20
+        minLength: 10
+        type: string
+    required:
+    - phone_number
+    type: object
+  models.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  models.RegisterRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      phone_number:
+        maxLength: 20
+        minLength: 10
+        type: string
+    required:
+    - email
+    - password
+    - phone_number
+    type: object
+  models.RequestOTPRequest:
+    properties:
+      channel:
+        enum:
+        - sms
+        - email
+        type: string
+      purpose:
+        enum:
+        - phone_verification
+        - login
+        - new_device
+        - pin_reset
+        - pin_set
+        - high_value_transaction
+        - risk_challenge
+        type: string
+    required:
+    - purpose
+    type: object
+  models.ResendVerificationRequest:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
+  models.ResetPINRequest:
+    properties:
+      challenge_token:
+        type: string
+      code:
+        maxLength: 8
+        minLength: 4
+        type: string
+      new_pin:
+        maxLength: 6
+        minLength: 4
+        type: string
+    required:
+    - challenge_token
+    - code
+    - new_pin
+    type: object
+  models.ResetPasswordRequest:
+    properties:
+      challenge_token:
+        type: string
+      code:
+        type: string
+      new_password:
+        maxLength: 72
+        minLength: 4
+        type: string
+      token:
+        type: string
+    required:
+    - new_password
+    type: object
+  models.SetPINRequest:
+    properties:
+      pin:
+        maxLength: 6
+        minLength: 4
+        type: string
+    required:
+    - pin
+    type: object
+  models.SubmitAddressRequest:
+    properties:
+      address_line1:
+        maxLength: 255
+        type: string
+      address_line2:
+        maxLength: 255
+        type: string
+      city:
+        maxLength: 100
+        type: string
+      postal_code:
+        maxLength: 20
+        type: string
+      state:
+        maxLength: 100
+        type: string
+    required:
+    - address_line1
+    - city
+    - state
+    type: object
+  models.TrustDeviceRequest:
+    properties:
+      device_id:
+        type: string
+      name:
+        maxLength: 150
+        type: string
+    required:
+    - device_id
+    type: object
+  models.VerifyEmailRequest:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
+  models.VerifyNINRequest:
+    properties:
+      encrypted_liveness_payload:
+        maxLength: 262144
+        type: string
+      liveness_frame_images_base64:
+        items:
+          type: string
+        type: array
+      nin:
+        type: string
+      result_token:
+        maxLength: 4096
+        type: string
+      selfie_image_base64:
+        maxLength: 10485760
+        type: string
+    required:
+    - liveness_frame_images_base64
+    - selfie_image_base64
+    type: object
+  models.VerifyPhoneRequest:
+    properties:
+      phone_number:
+        maxLength: 20
+        minLength: 10
+        type: string
+    required:
+    - phone_number
+    type: object
+info:
+  contact: {}
+  description: Identity, authentication, onboarding, KYC, device, and security APIs.
+  title: Nabla Identity Service API
+  version: "1.0"
+paths:
+  /api/v1/auth/forgot-password:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Forgot password payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.ForgotPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Forgot password
+      tags:
+      - Auth
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Login payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Login with email or phone and password
+      tags:
+      - Auth
+  /api/v1/auth/logout:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Logout payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.LogoutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Logout
+      tags:
+      - Auth
+  /api/v1/auth/magic-link/confirm:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Magic link confirmation payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.ConfirmMagicLinkRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Confirm magic link
+      tags:
+      - Auth
+  /api/v1/auth/magic-link/request:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Magic link request payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.MagicLinkRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Request magic link
+      tags:
+      - Auth
+  /api/v1/auth/password/phone/confirm:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Phone password reset confirmation
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.ConfirmPhonePasswordResetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Confirm phone password reset
+      tags:
+      - Auth
+  /api/v1/auth/password/phone/request:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Phone password reset request
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.PhonePasswordResetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Request phone password reset OTP
+      tags:
+      - Auth
+  /api/v1/auth/refresh:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Refresh token payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Refresh access token
+      tags:
+      - Auth
+  /api/v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Confirmed waitlist reservation token used to claim the reserved
+          Nablr username
+        in: header
+        name: X-Waitlist-Reservation-Token
+        type: string
+      - description: Registration payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Register with email, phone, and password
+      tags:
+      - Auth
+  /api/v1/auth/resend-verification:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Email payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.ResendVerificationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Resend email verification
+      tags:
+      - Auth
+  /api/v1/auth/reset-password:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Reset password payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.ResetPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Reset password
+      tags:
+      - Auth
+  /api/v1/auth/verify-email:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Email verification token
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.VerifyEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Verify email token
+      tags:
+      - Auth
+  /api/v1/kyc/address:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Address payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.SubmitAddressRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Submit address
+      tags:
+      - KYC
+  /api/v1/kyc/attempts:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List KYC attempts
+      tags:
+      - KYC
+  /api/v1/kyc/bvn:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: BVN payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.LookupBVNRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Submit authenticated BVN verification
+      tags:
+      - KYC
+  /api/v1/kyc/details:
+    post:
+      consumes:
+      - application/json
+      description: Calls the configured directory lookup provider. Send exactly one
+        of phone_number, bvn, or nin. When nin is sent, the service returns the provider
+        NIN lookup response.
+      parameters:
+      - description: KYC details lookup payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.LookupKYCDetailsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Lookup phone, BVN, or NIN details
+      tags:
+      - KYC
+  /api/v1/kyc/limits:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get transaction limits
+      tags:
+      - KYC
+  /api/v1/kyc/nin:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: NIN payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.LookupNINDetailsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Submit authenticated NIN verification
+      tags:
+      - KYC
+  /api/v1/kyc/profile:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get KYC profile
+      tags:
+      - KYC
+  /api/v1/mobile/version/check:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Version check payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.MobileVersionCheckRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Check mobile app version
+      tags:
+      - Mobile
+  /api/v1/onboarding/details:
+    post:
+      consumes:
+      - application/json
+      description: Uses the onboarding token instead of an access token. Send exactly
+        one of phone_number, bvn, or nin.
+      parameters:
+      - description: Bearer onboarding_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Client device ID
+        in: header
+        name: X-Device-ID
+        required: true
+        type: string
+      - description: Onboarding details lookup payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.LookupKYCDetailsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Lookup onboarding phone, BVN, or NIN details
+      tags:
+      - Onboarding
+  /api/v1/onboarding/device:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer onboarding_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Client device ID
+        in: header
+        name: X-Device-ID
+        required: true
+        type: string
+      - description: Device metadata payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.OnboardingDeviceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Register onboarding device
+      tags:
+      - Onboarding
+  /api/v1/onboarding/facial-verification:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer onboarding_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Client device ID
+        in: header
+        name: X-Device-ID
+        required: true
+        type: string
+      - description: Optional provider verification request ID
+        in: header
+        name: X-Verification-Request-ID
+        type: string
+      - description: Facial verification payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.FacialVerificationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Submit onboarding facial verification
+      tags:
+      - Onboarding
+  /api/v1/onboarding/nin:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer onboarding_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Client device ID
+        in: header
+        name: X-Device-ID
+        required: true
+        type: string
+      - description: Optional provider verification request ID
+        in: header
+        name: X-Verification-Request-ID
+        type: string
+      - description: NIN liveness payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.VerifyNINRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Submit onboarding NIN liveness verification
+      tags:
+      - Onboarding
+  /api/v1/onboarding/otp/resend:
+    post:
+      parameters:
+      - description: Bearer onboarding_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Client device ID
+        in: header
+        name: X-Device-ID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Resend onboarding OTP
+      tags:
+      - Onboarding
+  /api/v1/onboarding/password:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer onboarding_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Client device ID
+        in: header
+        name: X-Device-ID
+        required: true
+        type: string
+      - description: 6-digit numeric passcode payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.PhoneOnboardingPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Complete onboarding 6-digit passcode setup
+      tags:
+      - Onboarding
+  /api/v1/onboarding/phone/confirm:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer onboarding_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Client device ID
+        in: header
+        name: X-Device-ID
+        required: true
+        type: string
+      - description: OTP confirmation payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.PhoneOnboardingConfirmRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Confirm onboarding phone OTP
+      tags:
+      - Onboarding
+  /api/v1/onboarding/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Confirmed waitlist reservation token used to claim the reserved
+          Nablr username
+        in: header
+        name: X-Waitlist-Reservation-Token
+        type: string
+      - description: Phone and device metadata payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.PhoneOnboardingRegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Start phone onboarding
+      tags:
+      - Onboarding
+  /api/v1/onboarding/session/refresh:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Client device ID
+        in: header
+        name: X-Device-ID
+        required: true
+        type: string
+      - description: Phone payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.PhoneOnboardingRegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Refresh onboarding session
+      tags:
+      - Onboarding
+  /api/v1/onboarding/status:
+    get:
+      parameters:
+      - description: Bearer onboarding_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Client device ID
+        in: header
+        name: X-Device-ID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get onboarding status
+      tags:
+      - Onboarding
+  /api/v1/security/devices:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List user devices
+      tags:
+      - Security
+  /api/v1/security/devices/{deviceId}/block:
+    post:
+      parameters:
+      - description: Device ID
+        in: path
+        name: deviceId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Block device
+      tags:
+      - Security
+  /api/v1/security/devices/trust:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Trust device payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.TrustDeviceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Trust device
+      tags:
+      - Security
+  /api/v1/security/otp/request:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: OTP request payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.RequestOTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Request security OTP
+      tags:
+      - Security
+  /api/v1/security/phone/confirm:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Phone confirmation payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.PhoneOnboardingConfirmRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Confirm security phone
+      tags:
+      - Security
+  /api/v1/security/phone/verify:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Phone verification payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.VerifyPhoneRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Verify security phone
+      tags:
+      - Security
+  /api/v1/security/pin:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get PIN status
+      tags:
+      - Security
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Change PIN payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.ChangePINRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Change PIN
+      tags:
+      - Security
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: PIN payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.SetPINRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Set PIN
+      tags:
+      - Security
+  /api/v1/security/pin/reset:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Reset PIN payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.ResetPINRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Reset PIN
+      tags:
+      - Security
+  /health:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Health check
+      tags:
+      - Health
+schemes:
+- http
+- https
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
